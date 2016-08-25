@@ -10,10 +10,35 @@ class Widget(models.Model):
 
     internal_name = models.CharField(
         verbose_name="Internal name",
-        max_length=255
+        max_length=255,
     )
 
     enabled = models.BooleanField(
         verbose_name="Is widget enabled",
-        default=False
+        default=False,
+    )
+
+    tickets = models.ForeignKey(
+        "Ticket",
+        verbose_name="Tickets",
+        null=True,
+        blank=True,
+    )
+
+
+class Ticket(models.Model):
+
+    name = models.CharField(
+        verbose_name="Name",
+        max_length=255,
+    )
+
+    description = models.TextField(
+        verbose_name="Description",
+    )
+
+    box_office_price = models.DecimalField(
+        verbose_name="Box office price",
+        max_digits=6,
+        decimal_places=2,
     )

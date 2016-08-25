@@ -2,7 +2,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.contrib import admin
 
-from .models import Widget
+from .models import Widget, Ticket
 
 
 def get_groups(self, obj):
@@ -17,3 +17,4 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
 admin.site.register(Widget)
+admin.site.register(Ticket)
