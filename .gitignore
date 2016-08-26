@@ -1,0 +1,10 @@
+*sublime*
+__pycache__
+*.pyc
+node_modules
+pipcache
+frontend/dist/*
+nginx/static/*
+nginx/ssl/*
+*.log
+backups/*.bak
