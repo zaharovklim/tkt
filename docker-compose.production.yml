@@ -1,0 +1,29 @@
+version: '2'
+services:
+    db:
+        volumes:
+            - "./logs/postgres:/var/log/postgresql"
+    django:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile-production
+        environment:
+            DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_PROD}
+        volumes:
+            - "./logs/app:/tmp/logs/app"
+            - "./logs/gunicorn:/tmp/logs/gunicorn"
+        depends_on:
+            - db
+    nginx:
+        build:
+            context: ./
+            dockerfile: ./nginx/Dockerfile
+        depends_on:
+            - django
+        volumes: 
+            - "./backend/media:/media"
+            - "./logs/nginx:/tmp/logs"
+        ports:
+            - "80:80"
+            - "443:443"
+

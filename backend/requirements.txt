@@ -1,0 +1,11 @@
+# postgres database adapater
+psycopg2==2.6.1
+
+# django framework itself
+Django==1.9.2
+
+#app server for prod
+gunicorn==19.4.5
+
+
+djangorestframework==3.4.6
