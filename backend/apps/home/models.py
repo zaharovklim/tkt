@@ -1,9 +1,10 @@
 from django.db import models
 
 from apps.tickets.models import Ticket
+from apps.utils.models import ModelActionLogMixin
 
 
-class Widget(models.Model):
+class Widget(ModelActionLogMixin):
 
     name = models.TextField(
         verbose_name="Name",

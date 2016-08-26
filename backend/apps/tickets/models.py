@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.utils.models import ModelActionLogMixin
 
-class Ticket(models.Model):
+
+class Ticket(ModelActionLogMixin):
 
     name = models.TextField(
         verbose_name="Name",
