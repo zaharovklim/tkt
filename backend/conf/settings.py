@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'apps.home',
-    'apps.api'
+    'apps.tickets',
+    'apps.api',
 ]
 
 MIDDLEWARE_CLASSES = [

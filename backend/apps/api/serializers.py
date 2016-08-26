@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.home.models import Ticket
+from apps.tickets.models import Ticket
 
 
 class TicketsSerializer(serializers.ModelSerializer):

@@ -6,7 +6,7 @@ from rest_framework import permissions
 
 from conf.settings import MERCHANT_GROUP_NAME
 
-from apps.home.models import Ticket
+from apps.tickets.models import Ticket
 
 from .serializers import TicketsSerializer
 
