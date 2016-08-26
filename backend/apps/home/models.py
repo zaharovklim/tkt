@@ -3,14 +3,12 @@ from django.db import models
 
 class Widget(models.Model):
 
-    name = models.CharField(
+    name = models.TextField(
         verbose_name="Name",
-        max_length=255,
     )
 
-    internal_name = models.CharField(
+    internal_name = models.TextField(
         verbose_name="Internal name",
-        max_length=255,
     )
 
     enabled = models.BooleanField(
