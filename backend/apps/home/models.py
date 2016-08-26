@@ -25,6 +25,9 @@ class Widget(models.Model):
         blank=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Ticket(models.Model):
 
@@ -42,3 +45,6 @@ class Ticket(models.Model):
         max_digits=6,
         decimal_places=2,
     )
+
+    def __str__(self):
+        return self.name
