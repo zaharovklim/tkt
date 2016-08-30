@@ -11,6 +11,7 @@ from .models import Ticket
 class TicketForm(forms.ModelForm):
 
     name = forms.CharField()
+    internal_name = forms.CharField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,8 +29,8 @@ class TicketForm(forms.ModelForm):
 class TicketAdmin(admin.ModelAdmin):
 
     fields = (
-        'widget', 'name', 'description', 'box_office_price', 'template',
-        'min_accepted_bid', 'max_bid_attempts', 'pdf_link',
+        'widget', 'name', 'internal_name', 'description', 'box_office_price',
+        'template', 'min_accepted_bid', 'max_bid_attempts', 'pdf_link',
     )
     readonly_fields = ('pdf_link', )
 

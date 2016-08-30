@@ -23,6 +23,10 @@ class Ticket(ModelActionLogMixin):
         verbose_name="Name",
     )
 
+    internal_name = models.TextField(
+        verbose_name="Internal name",
+    )
+
     description = models.TextField(
         verbose_name="Description",
     )
@@ -46,7 +50,7 @@ class Ticket(ModelActionLogMixin):
     )
 
     min_accepted_bid = models.DecimalField(
-        verbose_name="Box office price",
+        verbose_name="Min accepted bid",
         max_digits=6,
         decimal_places=2,
         default=0,
