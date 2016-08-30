@@ -1,8 +1,10 @@
+from django import forms
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.contrib import admin
 
 from apps.tickets.models import Ticket
+from apps.tickets.admin import TicketForm
 
 from .models import Widget
 
@@ -20,11 +22,27 @@ admin.site.register(User, UserAdmin)
 
 
 class TicketInline(admin.StackedInline):
+
     model = Ticket
+    form = TicketForm
     extra = 1
+    readonly_fields = ('pdf_link', )
+
+
+class WidgetForm(forms.ModelForm):
+
+    name = forms.CharField()
+    internal_name = forms.CharField()
+
+    class Meta:
+        model = Widget
+        fields = ('name', 'internal_name', 'enabled', )
 
 
 class WidgetAdmin(admin.ModelAdmin):
+
+    form = WidgetForm
+
     inlines = [
         TicketInline,
     ]

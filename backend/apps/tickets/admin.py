@@ -1,5 +1,6 @@
 import os
 
+from django import forms
 from django.contrib import admin
 
 from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH
@@ -7,16 +8,32 @@ from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH
 from .models import Ticket
 
 
-class TicketAdmin(admin.ModelAdmin):
+class TicketForm(forms.ModelForm):
 
-    def get_form(self, request, obj=None, *args, **kwargs):
+    name = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         with open(os.path.join(BASE_DIR, BASE_TICKET_TEMPLATE_PATH), 'r') as f:
             initial_template = f.read()
 
-        form = super().get_form(request, *args, **kwargs)
-        form.base_fields['template'].initial = initial_template
-        return form
+        self.fields['template'].initial = initial_template
+
+    class Meta:
+        model = Ticket
+        exclude = ['pdf', ]
+
+
+class TicketAdmin(admin.ModelAdmin):
+
+    fields = (
+        'widget', 'name', 'description', 'box_office_price', 'template',
+        'min_accepted_bid', 'max_bid_attempts', 'pdf_link',
+    )
+    readonly_fields = ('pdf_link', )
+
+    form = TicketForm
 
 
 admin.site.register(Ticket, TicketAdmin)

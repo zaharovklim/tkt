@@ -57,6 +57,15 @@ class Ticket(ModelActionLogMixin):
         default=1,
     )
 
+    def pdf_link(self):
+        if self.pdf:
+            return '<a href="{}">Download PDF</a>'.format(self.pdf.url)
+        else:
+            return 'Save the ticket to be able to download PDF'
+
+    pdf_link.short_description = 'PDF file'
+    pdf_link.allow_tags = True
+
     def save(self, *args, **kwargs):
         changed_or_not_exists = False
         if self.pk is None:
