@@ -7,9 +7,17 @@ from ckeditor.fields import RichTextField
 
 from conf.settings import MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH
 from apps.utils.models import ModelActionLogMixin
+from apps.home.models import Widget
 
 
 class Ticket(ModelActionLogMixin):
+
+    widget = models.ForeignKey(
+        Widget,
+        verbose_name="Widget",
+        null=True,
+        blank=True,
+    )
 
     name = models.TextField(
         verbose_name="Name",
