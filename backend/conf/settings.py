@@ -41,10 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'ckeditor',
+
     'apps.home',
     'apps.tickets',
     'apps.api',
 ]
+
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,3 +144,7 @@ MEDIA_ROOT = '/media/'
 
 
 MERCHANT_GROUP_NAME = 'Merchant'
+
+WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
+
+BASE_TICKET_TEMPLATE_PATH = 'conf/base_ticket_template.html'

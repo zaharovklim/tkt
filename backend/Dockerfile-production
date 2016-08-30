@@ -1,11 +1,19 @@
 FROM python:3.5
 ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update
+RUN apt-get install -y wkhtmltopdf
+RUN apt-get install -y xvfb
+
 RUN pip3 install --upgrade pip
 RUN mkdir -p /app
 WORKDIR /app
 COPY ./requirements.txt /app/requirements.txt
 RUN pip3 install -r requirements.txt
 
+ADD ./utils/xvfb-wkhtmltopdf /usr/bin/
+
 COPY . /app/
 EXPOSE 8000
 CMD ./bin/start_production.sh
+
