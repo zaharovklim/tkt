@@ -7,8 +7,9 @@ from apps.tickets.models import Ticket
 from apps.tickets.admin import TicketForm
 from import_export import resources
 from import_export.admin import ImportMixin
+from image_cropping import ImageCroppingMixin
 
-from .models import Widget, Barcode
+from .models import Widget, Barcode, TicketImage
 
 
 def get_groups(self, obj):
@@ -21,6 +22,7 @@ UserAdmin.list_display = (
 )
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
 
 
 class TicketInline(admin.StackedInline):
@@ -61,5 +63,11 @@ class WidgetAdmin(admin.ModelAdmin):
         TicketInline,
     ]
 
+
+class TicketImageAdmin(ImageCroppingMixin, admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Widget, WidgetAdmin)
 admin.site.register(Barcode, BarcodeAdmin)
+admin.site.register(TicketImage, TicketImageAdmin)
