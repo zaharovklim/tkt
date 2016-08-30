@@ -72,7 +72,7 @@ class BarcodesImportAPIView(APIView):
     def put(self, *args, **kwargs):
         data = self.request.FILES['import_file_name']
         resource = self.get_import_resource_class()()
-        input_format = self.get_import_formats(self.request.POST['input_format'])[0]()
+        input_format = self.get_import_formats(str(self.request.POST['input_format']).lower())[0]()
         with tempfile.NamedTemporaryFile(delete=False) as uploaded_file:
             for chunk in data.chunks():
                 uploaded_file.write(chunk)
