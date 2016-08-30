@@ -3,20 +3,20 @@ try:
     from django.utils.encoding import force_text
 except ImportError:
     from django.utils.encoding import force_unicode as force_text
-from conf.settings import MERCHANT_GROUP_NAME
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
 )
-from apps.home.models import (
-    Ticket, Barcode
-)
 from rest_framework import permissions
+from conf.settings import MERCHANT_GROUP_NAME
+from apps.tickets.models import Ticket
+from .serializers import TicketsSerializer
+from apps.home.models import Barcode
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import TicketsSerializer
 from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
 import tempfile
+
 
 class IsMerchant(permissions.BasePermission):
 
@@ -40,6 +40,7 @@ class TicketsRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = TicketsSerializer
 
 class BarcodesImportAPIView(APIView):
+
     permission_classes = (IsMerchant, )
     model = Barcode
     from_encoding = "utf-8"

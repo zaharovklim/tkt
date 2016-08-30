@@ -40,12 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'ckeditor',
     'rest_framework',
     'import_export',
+
     'apps.home',
     'apps.tickets',
     'apps.api',
 ]
+
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -131,13 +136,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_ASSETS_JSON = os.path.join(STATIC_ROOT, 'assets.json')
 
 # user uploads
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/media/'
 
 
 MERCHANT_GROUP_NAME = 'Merchant'
+
+WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
+
+BASE_TICKET_TEMPLATE_PATH = 'conf/base_ticket_template.html'
