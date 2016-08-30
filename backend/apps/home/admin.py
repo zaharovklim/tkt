@@ -5,8 +5,10 @@ from django.contrib import admin
 
 from apps.tickets.models import Ticket
 from apps.tickets.admin import TicketForm
+from import_export import resources
+from import_export.admin import ImportMixin
 
-from .models import Widget
+from .models import Widget, Barcode
 
 
 def get_groups(self, obj):
@@ -39,6 +41,18 @@ class WidgetForm(forms.ModelForm):
         fields = ('name', 'internal_name', 'enabled', )
 
 
+class BarcodeResource(resources.ModelResource):
+
+    class Meta:
+        model = Barcode
+        skip_unchanged = True
+        report_skipped = True
+        fields = ('id', 'article', 'barcode')
+
+class BarcodeAdmin(ImportMixin, admin.ModelAdmin):
+    resource_class = BarcodeResource
+
+
 class WidgetAdmin(admin.ModelAdmin):
 
     form = WidgetForm
@@ -48,3 +62,4 @@ class WidgetAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(Widget, WidgetAdmin)
+admin.site.register(Barcode, BarcodeAdmin)

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'ckeditor',
+    'rest_framework',
+    'import_export',
 
     'apps.home',
     'apps.tickets',
@@ -134,13 +136,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_ASSETS_JSON = os.path.join(STATIC_ROOT, 'assets.json')
 
 # user uploads
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/media/'
 
 
 MERCHANT_GROUP_NAME = 'Merchant'
