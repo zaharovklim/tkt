@@ -25,7 +25,7 @@ SECRET_KEY = '^h85uo#*&q+5r=a1_l8i_&t$^$(sgsz-3*ijq8%22ayrbapxyk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#load frontend from webpack dev server rather than static
+# load frontend from webpack dev server rather than static
 WEBPACK_DEV_SERVER = True
 
 ALLOWED_HOSTS = []
@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'apps.home'
+    'rest_framework',
+    'import_export',
+    'apps.home',
+    'apps.tickets',
+    'apps.api',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -91,7 +94,6 @@ DATABASES = {
 }
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -131,8 +133,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static/'
 
-STATIC_ASSETS_JSON  = os.path.join(STATIC_ROOT, 'assets.json')
+STATIC_ASSETS_JSON = os.path.join(STATIC_ROOT, 'assets.json')
 
 # user uploads
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/media/'
+
+
+MERCHANT_GROUP_NAME = 'Merchant'
