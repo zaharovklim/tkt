@@ -26,7 +26,7 @@ class Ticket(ModelActionLogMixin):
     )
 
     template = RichTextField(
-        "Template",
+        verbose_name="Template",
         default="",
     )
 
@@ -35,6 +35,18 @@ class Ticket(ModelActionLogMixin):
         upload_to=MEDIA_ROOT,
         null=True,
         blank=True,
+    )
+
+    min_accepted_bid = models.DecimalField(
+        verbose_name="Box office price",
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+    )
+
+    max_bid_attempts = models.PositiveSmallIntegerField(
+        verbose_name="Amount of times user can bid",
+        default=1,
     )
 
     def save(self, *args, **kwargs):
