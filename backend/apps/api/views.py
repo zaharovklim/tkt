@@ -1,21 +1,26 @@
+import tempfile
+
 from django.contrib.auth.models import Group
 try:
     from django.utils.encoding import force_text
 except ImportError:
     from django.utils.encoding import force_unicode as force_text
+
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
 )
 from rest_framework import permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from import_export.formats import base_formats
+from import_export.resources import modelresource_factory
+
 from conf.settings import MERCHANT_GROUP_NAME
 from apps.tickets.models import Ticket
 from .serializers import TicketsSerializer
 from apps.home.models import Barcode
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from import_export.formats import base_formats
-from import_export.resources import modelresource_factory
-import tempfile
+
 
 
 class IsMerchant(permissions.BasePermission):
@@ -72,7 +77,9 @@ class BarcodesImportAPIView(APIView):
     def put(self, *args, **kwargs):
         data = self.request.FILES['import_file_name']
         resource = self.get_import_resource_class()()
-        input_format = self.get_import_formats(str(self.request.POST['input_format']).lower())[0]()
+        input_format = self.get_import_formats(
+            str(self.request.POST['input_format']).lower()
+        )[0]()
         with tempfile.NamedTemporaryFile(delete=False) as uploaded_file:
             for chunk in data.chunks():
                 uploaded_file.write(chunk)
@@ -82,10 +89,9 @@ class BarcodesImportAPIView(APIView):
             data = force_text(data, self.from_encoding)
 
         dataset = input_format.create_dataset(data)
-        resource.import_data(dataset, dry_run=False,
-                                      raise_errors=True)
+        resource.import_data(dataset, dry_run=False, raise_errors=True)
 
         import_file.close()
 
-        return Response(status=201)
+        return Response(status=status.HTTP_201_CREATED)
         

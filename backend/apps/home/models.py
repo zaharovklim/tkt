@@ -1,4 +1,5 @@
 from django.db import models
+
 from import_export import resources
 
 from apps.utils.models import ModelActionLogMixin
@@ -41,12 +42,8 @@ class Barcode(models.Model):
         auto_now_add=True
     )
 
-    def __unicode__(self):
+    def str(self):
         return self.barcode
-
-    def __str__(self):
-        barcode = str(self.barcode)
-        return barcode
 
 
 class BarcodeResource(resources.ModelResource):
