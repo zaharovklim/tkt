@@ -21,7 +21,11 @@ class Bid(models.Model):
         decimal_places=2,
     )
 
-    # TODO: creation time
+    created_at = models.DateTimeField(
+        verbose_name="Created at",
+        auto_now_add=True,
+        blank=True
+    )
 
     def __str__(self):
         return "{} - {}".format(self.ticket, self.bid_price)
