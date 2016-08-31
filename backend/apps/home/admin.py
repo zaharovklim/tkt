@@ -9,7 +9,7 @@ from image_cropping import ImageCroppingMixin
 
 from apps.tickets.models import Ticket
 from apps.tickets.admin import TicketForm
-from .models import Widget, Barcode, TicketImage
+from .models import Widget, Barcode, TicketImage, BarcodeImage
 
 
 def get_groups(self, obj):
@@ -67,6 +67,16 @@ class TicketImageAdmin(ImageCroppingMixin, admin.ModelAdmin):
     pass
 
 
+class BarcodeImageAdmin(admin.ModelAdmin):
+
+    list_display = ('merchant', 'barcode')
+    readonly_fields = ('image',)
+
+    def barcode(self, instance):
+        return instance.barcode.barcode
+
+
 admin.site.register(Widget, WidgetAdmin)
 admin.site.register(Barcode, BarcodeAdmin)
 admin.site.register(TicketImage, TicketImageAdmin)
+admin.site.register(BarcodeImage, BarcodeImageAdmin)
