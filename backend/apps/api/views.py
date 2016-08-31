@@ -22,7 +22,6 @@ from .serializers import TicketsSerializer
 from apps.home.models import Barcode
 
 
-
 class IsMerchant(permissions.BasePermission):
 
     def has_permission(self, request, view):
@@ -43,6 +42,7 @@ class TicketsRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsMerchant, )
     queryset = Ticket.objects.all()
     serializer_class = TicketsSerializer
+
 
 class BarcodesImportAPIView(APIView):
 
@@ -94,4 +94,3 @@ class BarcodesImportAPIView(APIView):
         import_file.close()
 
         return Response(status=status.HTTP_201_CREATED)
-        

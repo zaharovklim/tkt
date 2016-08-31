@@ -34,15 +34,15 @@ class Barcode(models.Model):
 
     barcode = models.BigIntegerField(
         verbose_name="Barcode",
-        null = True,
-        blank = True
+        null=True,
+        blank=True
     )
 
     created = models.DateTimeField(
         auto_now_add=True
     )
 
-    def str(self):
+    def __str__(self):
         return self.barcode
 
 
