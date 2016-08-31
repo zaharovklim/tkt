@@ -36,16 +36,16 @@ class Barcode(models.Model):
 
     barcode = models.BigIntegerField(
         verbose_name="Barcode",
-        null = True,
-        blank = True
+        null=True,
+        blank=True
     )
 
     created = models.DateTimeField(
         auto_now_add=True
     )
 
-    def str(self):
-        return self.barcode
+    def __str__(self):
+        return str(self.barcode)
 
 
 class BarcodeResource(resources.ModelResource):
