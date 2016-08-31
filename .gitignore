@@ -8,3 +8,5 @@ nginx/static/*
 nginx/ssl/*
 *.log
 backups/*.bak
+.idea
+backend/media/*

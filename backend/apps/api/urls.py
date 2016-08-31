@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from apps.api.views import (
-    TicketsRetrieveUpdateDestroyAPIView, TicketsCreateAPIView
+    TicketsRetrieveUpdateDestroyAPIView, TicketsCreateAPIView,
+    BarcodesImportAPIView
 )
 
 
@@ -10,5 +11,8 @@ urlpatterns = [
         name='tickets-create'),
     url(r'^tickets/(?P<pk>[\d]+)/$',
         TicketsRetrieveUpdateDestroyAPIView.as_view(),
-        name='tickets')
+        name='tickets'),
+    url(r'^barcodes/import/$',
+        BarcodesImportAPIView.as_view(),
+        name='barcodes-import'),
 ]
