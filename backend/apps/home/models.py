@@ -43,7 +43,7 @@ class Barcode(models.Model):
     )
 
     def __str__(self):
-        return self.barcode
+        return str(self.barcode)
 
 
 class BarcodeResource(resources.ModelResource):
