@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from apps.api.views import (
-    TicketsRetrieveUpdateDestroyAPIView, TicketsCreateAPIView, BarcodesImportAPIView
+    TicketsRetrieveUpdateDestroyAPIView, TicketsCreateAPIView,
+    BarcodesImportAPIView
 )
 
 

@@ -1,9 +1,9 @@
 from django.db import models
+
 from import_export import resources
 
 from apps.utils.models import ModelActionLogMixin
-from django.contrib.auth.models import User
-from image_cropping import ImageRatioField
+
 
 class Widget(ModelActionLogMixin):
 
@@ -42,27 +42,10 @@ class Barcode(models.Model):
         auto_now_add=True
     )
 
-    def __unicode__(self):
+    def str(self):
         return self.barcode
-
-    def __str__(self):
-        barcode = str(self.barcode)
-        return barcode
 
 
 class BarcodeResource(resources.ModelResource):
     class Meta:
         model = Barcode
-
-
-class TicketImage(models.Model):
-    merchant = models.ForeignKey(User)
-    image = models.ImageField(
-        upload_to='images',
-        null=True,
-        blank=True
-    )
-    cropped_img = ImageRatioField('image', '360x360')
-
-    def __str__(self):
-        return str(self.merchant)
