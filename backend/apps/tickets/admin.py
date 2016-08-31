@@ -30,7 +30,7 @@ class TicketAdmin(admin.ModelAdmin):
 
     fields = (
         'widget', 'name', 'internal_name', 'description', 'box_office_price',
-        'template', 'min_accepted_bid', 'max_bid_attempts', 'pdf_link',
+        'template', 'pdf_link', 'min_accepted_bid', 'max_bid_attempts',
     )
     readonly_fields = ('pdf_link', )
 

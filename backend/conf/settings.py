@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     'apps.home',
     'apps.tickets',
+    'apps.bids',
     'apps.api',
 ]
 
