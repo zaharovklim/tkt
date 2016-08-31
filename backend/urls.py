@@ -17,8 +17,10 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from apps.home.views import bid_statistics
 
 urlpatterns = [
+    url(r'^admin/statistics/', bid_statistics),
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/', include('apps.api.urls')),
     url(r'^', include('apps.home.urls')),

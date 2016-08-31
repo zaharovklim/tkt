@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 from import_export import resources
+from image_cropping import ImageRatioField
 
 from apps.utils.models import ModelActionLogMixin
 
@@ -49,3 +51,16 @@ class Barcode(models.Model):
 class BarcodeResource(resources.ModelResource):
     class Meta:
         model = Barcode
+
+
+class TicketImage(models.Model):
+    merchant = models.ForeignKey(User)
+    image = models.ImageField(
+        upload_to='images',
+        null=True,
+        blank=True
+    )
+    cropped_img = ImageRatioField('image', '360x360')
+
+    def __str__(self):
+        return str(self.merchant)

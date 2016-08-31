@@ -9,9 +9,9 @@ except ImportError:
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
 )
-from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import permissions
 from rest_framework import status
 from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
@@ -94,3 +94,4 @@ class BarcodesImportAPIView(APIView):
         import_file.close()
 
         return Response(status=status.HTTP_201_CREATED)
+
