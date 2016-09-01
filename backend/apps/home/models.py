@@ -56,6 +56,7 @@ class BarcodeResource(resources.ModelResource):
     class Meta:
         model = Barcode
 
+
 class TicketImage(models.Model):
 
     merchant = models.ForeignKey(
