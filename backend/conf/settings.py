@@ -161,3 +161,5 @@ MERCHANT_GROUP_NAME = 'Merchant'
 WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
 
 BASE_TICKET_TEMPLATE_PATH = 'conf/base_ticket_template.html'
+
+BARCODE_PATH = os.path.join(MEDIA_URL, 'barcodes/')
