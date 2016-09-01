@@ -39,7 +39,7 @@ class WidgetForm(forms.ModelForm):
 
     class Meta:
         model = Widget
-        fields = ('name', 'internal_name', 'enabled', )
+        fields = ('name', 'internal_name', 'enabled', 'created_by', )  # TODO: remove created_by
 
 
 class BarcodeResource(resources.ModelResource):
@@ -49,6 +49,7 @@ class BarcodeResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         fields = ('id', 'article', 'barcode')
+
 
 class BarcodeAdmin(ImportMixin, admin.ModelAdmin):
     resource_class = BarcodeResource

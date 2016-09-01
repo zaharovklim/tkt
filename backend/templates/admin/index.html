@@ -1,0 +1,39 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+    <div class="module" id="statistics" style="width: 600px;">
+    <table>
+        <caption style="width: 584px;">
+            <a href="/admin/statistics/" class="section" title="Statistics">Bid statistics</a>
+        </caption>
+        <tbody>
+            <tr class="modegroup">
+                <th scope="row">
+                    <a href="/admin/statistics/overall/">Overall</a>
+                </th>
+            </tr>
+            <tr class="modegroup">
+                <th scope="row">
+                    <a href="/admin/statistics/merchant/">Per merchant</a>
+                </th>
+            </tr>
+            <tr class="modegroup">
+                <th scope="row">
+                    <a href="/admin/statistics/widget/">Per widget</a>
+                </th>
+            </tr>
+            <tr class="modegroup">
+                <th scope="row">
+                    <a href="/admin/statistics/ticket/">Per ticket</a>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    {{ block.super }}
+    <script type="text/javascript">
+        var statistics = document.getElementById("statistics");
+        var content = document.getElementById("content-main")
+        content.appendChild(statistics);
+    </script>
+{% endblock %}

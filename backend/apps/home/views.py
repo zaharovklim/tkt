@@ -1,8 +1,17 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
 from django.http import HttpResponseBadRequest
 
 from apps.tickets.models import Ticket
 from apps.bids.models import Bid
+from apps.home.models import Widget
+
+
+STATISTICS_MODELS = {
+    'user': User,
+    'widget': Widget,
+    'ticket': Ticket,
+}
 
 
 def index(request):
@@ -70,3 +79,15 @@ def bid_statistics(request):
             ]
     }
     return render(request, 'home/statistics.html', context)
+
+
+# TODO: restrict access to staff
+def bid_statistics_list_per_model(request, model):
+
+    objects = (
+        STATISTICS_MODELS[model].objects.get_objects_list_by_role(request.user)
+    )
+
+    context = {'objects': objects}
+
+    return render(request, 'home/statistics_per_model.html', context)
