@@ -50,6 +50,7 @@ class BarcodeResource(resources.ModelResource):
         report_skipped = True
         fields = ('id', 'article', 'barcode')
 
+
 class BarcodeAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = BarcodeResource
 

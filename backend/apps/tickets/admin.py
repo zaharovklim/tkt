@@ -47,8 +47,4 @@ class TicketAdmin(ExportMixin, admin.ModelAdmin):
     form = TicketForm
 
 
-
-
-
-
 admin.site.register(Ticket, TicketAdmin)

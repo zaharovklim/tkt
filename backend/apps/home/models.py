@@ -8,7 +8,7 @@ from import_export import resources
 from image_cropping import ImageRatioField
 
 from apps.utils.models import ModelActionLogMixin
-from conf.settings import MEDIA_URL, MERCHANT_GROUP_NAME
+from conf.settings import MERCHANT_GROUP_NAME, BARCODE_PATH
 
 
 class Widget(ModelActionLogMixin):
@@ -40,8 +40,8 @@ class Barcode(models.Model):
 
     barcode = models.BigIntegerField(
         verbose_name="Barcode",
-        null = True,
-        blank = True
+        null=True,
+        blank=True
     )
 
     created = models.DateTimeField(
@@ -55,6 +55,7 @@ class Barcode(models.Model):
 class BarcodeResource(resources.ModelResource):
     class Meta:
         model = Barcode
+
 
 class TicketImage(models.Model):
 
@@ -96,8 +97,10 @@ class BarcodeImage(models.Model):
     )
 
     format = models.CharField(
-        choices=FORMAT_CHOISES, default=EAN13, max_length=21,
-        verbose_name='Barcode format'
+	    verbose_name='Barcode format',
+        choices=FORMAT_CHOISES,
+	    default=EAN13,
+	    max_length=21
     )
 
     image = models.ImageField(
@@ -109,10 +112,9 @@ class BarcodeImage(models.Model):
         return str(self.merchant)
 
     def save(self):
-        save_dir = MEDIA_URL + 'barcodes/'
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-        get_barcode = barcode.get_barcode_class(str(self.format))
+        if not os.path.exists(BARCODE_PATH):
+            os.makedirs(BARCODE_PATH)
+        get_barcode = barcode.get_barcode_class(self.format)
         image = get_barcode(str(self.barcode), writer=ImageWriter())
-        self.image = image.save(save_dir + str(self.barcode))
+        self.image = image.save(os.path.join(BARCODE_PATH, str(self.barcode)))
         super().save()
