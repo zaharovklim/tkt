@@ -5,6 +5,9 @@ from django.contrib import admin
 
 from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH
 
+from import_export import resources
+from import_export.admin import ExportMixin
+
 from .models import Ticket
 
 
@@ -25,8 +28,15 @@ class TicketForm(forms.ModelForm):
         model = Ticket
         exclude = ['pdf', ]
 
+class TicketResource(resources.ModelResource):
 
-class TicketAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Ticket
+        exclude = ('template', 'pdf')
+
+class TicketAdmin(ExportMixin, admin.ModelAdmin):
+
+    resource_class = TicketResource
 
     fields = (
         'widget', 'name', 'internal_name', 'description', 'box_office_price',
@@ -35,6 +45,10 @@ class TicketAdmin(admin.ModelAdmin):
     readonly_fields = ('pdf_link', )
 
     form = TicketForm
+
+
+
+
 
 
 admin.site.register(Ticket, TicketAdmin)

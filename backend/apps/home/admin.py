@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 
 from import_export import resources
-from import_export.admin import ImportMixin
+from import_export.admin import ImportExportMixin
 from image_cropping import ImageCroppingMixin
 
 from apps.tickets.models import Ticket
@@ -50,7 +50,7 @@ class BarcodeResource(resources.ModelResource):
         report_skipped = True
         fields = ('id', 'article', 'barcode')
 
-class BarcodeAdmin(ImportMixin, admin.ModelAdmin):
+class BarcodeAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = BarcodeResource
 
 
