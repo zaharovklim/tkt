@@ -162,3 +162,7 @@ WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
 BASE_TICKET_TEMPLATE_PATH = 'conf/base_ticket_template.html'
 
 BARCODE_PATH = os.path.join(MEDIA_URL, 'barcodes/')
+
+MAILCHIMP_API_KEY = '5685454b46df8b9eac0cb53f8ce2d15e-us14'
+
+MAILCHIMP_URL = "https://{}.api.mailchimp.com/3.0/".format(MAILCHIMP_API_KEY.split('-')[1])
