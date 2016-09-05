@@ -1,10 +1,7 @@
 import tempfile
 
 from django.contrib.auth.models import Group
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
+from django.utils.encoding import force_text
 
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
@@ -18,8 +15,9 @@ from import_export.resources import modelresource_factory
 
 from conf.settings import MERCHANT_GROUP_NAME
 from apps.tickets.models import Ticket
-from .serializers import TicketsSerializer
 from apps.home.models import Barcode
+
+from .serializers import TicketsSerializer
 
 
 class IsMerchant(permissions.BasePermission):
@@ -94,4 +92,3 @@ class BarcodesImportAPIView(APIView):
         import_file.close()
 
         return Response(status=status.HTTP_201_CREATED)
-

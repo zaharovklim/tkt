@@ -5,7 +5,10 @@ from django.db import models
 import pdfkit
 from ckeditor.fields import RichTextField
 
-from conf.settings import MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH
+from conf.settings import (
+    MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH,
+    ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME,
+)
 from apps.utils.models import ModelActionLogMixin
 from apps.home.models import Widget
 
@@ -14,9 +17,9 @@ class TicketManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
         role = user.get_role()
-        if role == 'Admin':  # TODO: use constants
+        if role == ADMIN_GROUP_NAME:
             return self.get_queryset()
-        elif role == 'Merchant':
+        elif role == MERCHANT_GROUP_NAME:
             return self.get_queryset().filter(created_by=user)
 
 
@@ -77,6 +80,7 @@ class Ticket(ModelActionLogMixin):
     def bid_statistics(self):
         bids = self.bid_set.all()
         # TODO: create migrations for status field
+        # TODO: use statuses Emun
         accepted_count = bids.filter(status="ACCEPTED").count()
         paid_count = bids.filter(status="PAID").count()
         rejected_count = bids.filter(status="REJECTED").count()

@@ -1,3 +1,90 @@
-{% for obj in objects %}
-    {{ obj }} - {{ obj.created_by }} - {{ obj.bid_statistics }}<br>
-{% endfor %}
+{% extends "admin/index.html" %}
+
+{% block title %}Statistics per {{ model|capfirst }}{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">Home</a>
+         &rsaquo; Statistics per {{ model|capfirst }}
+    </div>
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var options = {
+            isStacked: true,
+            height: 40,
+            width: 400,
+            legend: {position: 'top'},
+            bars: 'horizontal'
+        };
+
+        {% for object in objects %}
+            var material = new google.visualization.BarChart(
+                document.getElementById("statistics_chart_{{ object.id }}")
+            );
+
+            var data = google.visualization.arrayToDataTable([
+              ['Status', 'Accepted' , 'Paid', 'Rejected', { role: 'annotation' } ],
+              ['',
+               {{ object.bid_statistics.accepted }},
+               {{ object.bid_statistics.paid }},
+               {{ object.bid_statistics.rejected }},
+              ''],
+            ]);
+
+            material.draw(data, options);
+        {% endfor %}
+    }
+</script>
+
+
+<div id="content-main">
+  <table id="result_list">
+    <thead>
+      <tr>
+        <th scope="col" class="column-__str__">
+          <div class="text"><span>Statistics</span></div>
+          <div class="clear"></div>
+        </th>
+        <th>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {% if overall_statistics %}
+      <tr class="row1">
+        <th class="field-__str__">
+          {{ overall_statistics }}
+        </th>
+        <th>
+        </th>
+      </tr>
+    {% else %}
+      {% for object in objects %}
+        <tr class="{% cycle 'row1' 'row2' %}">
+          <th class="field-__str__">
+            <a style="display: block; padding-top: 12px;"
+               href="{{ object.get_absolute_path }}">{{ object.name }}</a>
+          </th>
+          <th>
+            <div id="statistics_chart_{{ object.id }}"></div>
+          </th>
+        </tr>
+      {% endfor %}
+    {% endif %}
+
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+

@@ -1,17 +1,12 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.http import HttpResponseBadRequest
+from django.contrib.auth.models import User, Group
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 
+from conf.settings import ADMIN_GROUP_NAME
 from apps.tickets.models import Ticket
 from apps.bids.models import Bid
 from apps.home.models import Widget
-
-
-STATISTICS_MODELS = {
-    'user': User,
-    'widget': Widget,
-    'ticket': Ticket,
-}
 
 
 def index(request):
@@ -69,25 +64,45 @@ def index(request):
     return render(request, 'home/index.html')
 
 
-def bid_statistics(request):
+@staff_member_required
+def bid_statistics_overall_view(request):
+    admin_group = Group.objects.get(name=ADMIN_GROUP_NAME)
+    if admin_group not in request.user.groups.all():
+        return HttpResponseForbidden(
+            "Only admin has permission to overall statistics"
+        )
+
+    objects = Widget.objects.all()
+    overall_statistics = {'accepted': 0, 'paid': 0, 'rejected': 0}
+    for object in objects:
+        for stat_prop in object.bid_statistics.keys():
+            overall_statistics[stat_prop] += object.bid_statistics[stat_prop]
+
     context = {
-        'statistics_data':
-            [
-                {"label": "accepted", "value": 540},
-                {"label": "paid", "value": 120},
-                {"label": "rejected", "value": 200}
-            ]
+        'object': {
+            'id': 1,
+            'name': 'Overall',
+            'bid_statistics': overall_statistics,
+        }
     }
-    return render(request, 'home/statistics.html', context)
+    return render(request, 'home/statistics_per_model.html', context)
 
 
-# TODO: restrict access to staff
-def bid_statistics_list_per_model(request, model):
+@staff_member_required
+def bid_statistics_per_model_view(request, model):
+    STATISTICS_MODELS_MAP = {
+        'merchant': User,
+        'widget': Widget,
+        'ticket': Ticket,
+    }
 
     objects = (
-        STATISTICS_MODELS[model].objects.get_objects_list_by_role(request.user)
+        STATISTICS_MODELS_MAP[model].objects
+        .get_objects_list_by_role(request.user)
     )
 
-    context = {'objects': objects}
-
+    context = {
+        'objects': objects,
+        'model': model,
+    }
     return render(request, 'home/statistics_per_model.html', context)

@@ -155,7 +155,8 @@ STATIC_ASSETS_JSON = os.path.join(STATIC_ROOT, 'assets.json')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-
+# TODO: use Enum
+ADMIN_GROUP_NAME = 'Admin'
 MERCHANT_GROUP_NAME = 'Merchant'
 
 WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
