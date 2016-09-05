@@ -8,6 +8,7 @@ class Bid(models.Model):
     BID_STATUSES = (
         ('ACCEPTED', 'accepted'),
         ('REJECTED', 'rejected'),
+        ('PAID', 'paid')
     )
 
     ticket = models.ForeignKey(
@@ -37,6 +38,10 @@ class Bid(models.Model):
         max_length=8,
         choices=BID_STATUSES,
         default='ACCEPTED',
+    )
+
+    number_of_tickets = models.SmallIntegerField(
+        verbose_name="Number of tickets",
     )
 
     def __str__(self):

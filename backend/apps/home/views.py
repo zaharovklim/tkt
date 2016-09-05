@@ -10,7 +10,7 @@ def index(request):
         request.session.create()
 
     if request.method == 'POST':
-        # Get and clean ticket_id and bid_price
+        # Get and clean ticket_id, bid_price and number_of_tickets
         try:
             ticket_id = int(request.POST.get('ticket_id'))
         except ValueError:
@@ -20,6 +20,11 @@ def index(request):
             bid_price = float(request.POST.get('bid_price'))
         except ValueError:
             return HttpResponseBadRequest("Bid price is invalid")
+
+        try:
+            number_of_tickets = int(request.POST.get('number_of_tickets'))
+        except ValueError:
+            return HttpResponseBadRequest("Number of tickets is invalid")
 
         # Increment bid_attempts counter
         if request.session.get('bid_attempts') is None:
@@ -55,6 +60,7 @@ def index(request):
             session_key=request.session.session_key,
             ticket=ticket,
             bid_price=bid_price,
+            number_of_tickets=number_of_tickets,
         )
 
     return render(request, 'home/index.html')
