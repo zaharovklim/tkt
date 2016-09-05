@@ -1,3 +1,6 @@
+import barcode, os
+from barcode.writer import ImageWriter
+
 from django.db import models
 from django.contrib.auth.models import User, Group
 
@@ -6,6 +9,7 @@ from image_cropping import ImageRatioField
 
 from conf.settings import ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME
 from apps.utils.models import ModelActionLogMixin
+from conf.settings import MERCHANT_GROUP_NAME, BARCODE_PATH
 
 
 # ----------------------------------------------------------------------------
@@ -132,13 +136,63 @@ class BarcodeResource(resources.ModelResource):
 
 
 class TicketImage(models.Model):
-    merchant = models.ForeignKey(User)
+
+    merchant = models.ForeignKey(
+        User, limit_choices_to={'groups__name': MERCHANT_GROUP_NAME}
+    )
+
     image = models.ImageField(
         upload_to='images',
         null=True,
         blank=True
     )
+
     cropped_img = ImageRatioField('image', '360x360')
 
     def __str__(self):
         return str(self.merchant)
+
+
+class BarcodeImage(models.Model):
+
+    EAN13 = 'ean13'
+    EAN8 = 'ean8'
+    CODE128 = 'code128'
+    STANDARD39 = 'code39'
+    FORMAT_CHOISES = (
+        (EAN13, 'EAN-8'),
+        (EAN8, 'EAN-13'),
+        (CODE128, 'Code-128'),
+        (STANDARD39, 'Starndard-39'),
+    )
+
+    merchant = models.ForeignKey(
+        User, limit_choices_to={'groups__name': MERCHANT_GROUP_NAME}
+    )
+
+    barcode = models.ForeignKey(
+        Barcode
+    )
+
+    format = models.CharField(
+	    verbose_name='Barcode format',
+        choices=FORMAT_CHOISES,
+	    default=EAN13,
+	    max_length=21
+    )
+
+    image = models.ImageField(
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.merchant)
+
+    def save(self):
+        if not os.path.exists(BARCODE_PATH):
+            os.makedirs(BARCODE_PATH)
+        get_barcode = barcode.get_barcode_class(self.format)
+        image = get_barcode(str(self.barcode), writer=ImageWriter())
+        self.image = image.save(os.path.join(BARCODE_PATH, str(self.barcode)))
+        super().save()
