@@ -28,11 +28,13 @@ class TicketForm(forms.ModelForm):
         model = Ticket
         exclude = ['pdf', ]
 
+
 class TicketResource(resources.ModelResource):
 
     class Meta:
         model = Ticket
         exclude = ('template', 'pdf')
+
 
 class TicketAdmin(ExportMixin, admin.ModelAdmin):
 

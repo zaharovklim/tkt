@@ -7,7 +7,6 @@ class Bid(models.Model):
 
     BID_STATUSES = (
         ('ACCEPTED', 'accepted'),
-        ('PAID', 'paid'),
         ('REJECTED', 'rejected'),
     )
 
@@ -42,3 +41,62 @@ class Bid(models.Model):
 
     def __str__(self):
         return "{} - {} - {}".format(self.ticket, self.bid_price, self.status)
+
+
+class Order(models.Model):
+
+    bid = models.ForeignKey(
+        Bid,
+        verbose_name="Bid",
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name="Created at",
+        auto_now_add=True,
+        blank=True,
+    )
+
+    number_of_tickets = models.SmallIntegerField(
+        verbose_name="Number of tickets",
+    )
+
+    ip_address = models.GenericIPAddressField(
+        verbose_name="IP Address",
+        blank=True,
+        null=True,
+    )
+
+    article_title = models.TextField(
+        verbose_name="Article title",
+        blank=True,
+        null=True,
+    )
+
+    first_name = models.TextField(
+        verbose_name="First name",
+        blank=True,
+        null=True,
+    )
+
+    last_name = models.TextField(
+        verbose_name="Last name",
+        blank=True,
+        null=True,
+    )
+
+    email = models.EmailField(
+        verbose_name="E-mail",
+    )
+
+    is_paid = models.BooleanField(
+        verbose_name="Is paid",
+        default=False,
+    )
+
+    def __str__(self):
+        return "{} ({}) - {} - {}".format(
+            self.bid,
+            self.number_of_tickets,
+            self.created_at.replace(microsecond=0),
+            'Paid' if self.is_paid else 'Waiting for payment'
+        )
