@@ -13,7 +13,7 @@ from rest_framework import status
 from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
 
-from conf.settings import MERCHANT_GROUP_NAME
+from conf.settings import ROLES
 from apps.tickets.models import Ticket
 from apps.home.models import Barcode
 
@@ -23,7 +23,7 @@ from .serializers import TicketsSerializer
 class IsMerchant(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        merchant_group = Group.objects.get(name=MERCHANT_GROUP_NAME)
+        merchant_group = Group.objects.get(name=ROLES.MERCHANT.value)
         user_groups = request.user.groups.all()
 
         return merchant_group in user_groups

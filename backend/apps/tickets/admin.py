@@ -26,7 +26,7 @@ class TicketForm(forms.ModelForm):
 
     class Meta:
         model = Ticket
-        exclude = ['pdf', ]
+        exclude = ('pdf', )
 
 
 class TicketResource(resources.ModelResource):

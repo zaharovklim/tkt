@@ -1,4 +1,5 @@
-import barcode, os
+import os
+import barcode
 from barcode.writer import ImageWriter
 
 from django.db import models
@@ -7,24 +8,25 @@ from django.contrib.auth.models import User, Group
 from import_export import resources
 from image_cropping import ImageRatioField
 
-from conf.settings import ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME, BARCODE_PATH
+from conf.settings import ROLES, BARCODE_PATH
 from apps.utils.models import ModelActionLogMixin
 
+
+merchant = Group.objects.get(name=ROLES.MERCHANT.value)
+admin = Group.objects.get(name=ROLES.ADMIN.value)
 
 # ----------------------------------------------------------------------------
 # Extending of User model
 # ----------------------------------------------------------------------------
 
+
 def role(self):
     groups = self.groups.all()
 
-    merchant = Group.objects.get(name=MERCHANT_GROUP_NAME)
-    admin = Group.objects.get(name=ADMIN_GROUP_NAME)
-
     if merchant in groups:
-        return MERCHANT_GROUP_NAME
+        return ROLES.MERCHANT
     elif admin in groups:
-        return ADMIN_GROUP_NAME
+        return ROLES.ADMIN
     else:
         raise ValueError(
             'User has no appropriate group, there only "Merchant" and "Admin" '
@@ -54,13 +56,10 @@ User.add_to_class('name', name)
 class UserManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
-        role = user.role
-
-        if role == ADMIN_GROUP_NAME:
-            merchant = Group.objects.get(name=MERCHANT_GROUP_NAME)
+        if user.role is ROLES.ADMIN:
             return self.get_queryset().filter(groups__in=(merchant, ))
-        elif role == MERCHANT_GROUP_NAME:
-            return (user, )
+        elif user.role is ROLES.MERCHANT:
+            return self.get_queryset().filter(id=user.id)
 
 User.add_to_class('objects', UserManager())
 
@@ -70,10 +69,9 @@ User.add_to_class('objects', UserManager())
 class WidgetManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
-        role = user.role
-        if role == ADMIN_GROUP_NAME:
+        if user.role is ROLES.ADMIN:
             return self.get_queryset()
-        elif role == MERCHANT_GROUP_NAME:
+        elif user.role is ROLES.MERCHANT:
             return self.get_queryset().filter(created_by=user)
 
 
@@ -139,7 +137,7 @@ class BarcodeResource(resources.ModelResource):
 class TicketImage(models.Model):
 
     merchant = models.ForeignKey(
-        User, limit_choices_to={'groups__name': MERCHANT_GROUP_NAME}
+        User, limit_choices_to={'groups__name': ROLES.MERCHANT.value}
     )
 
     image = models.ImageField(
@@ -168,7 +166,7 @@ class BarcodeImage(models.Model):
     )
 
     merchant = models.ForeignKey(
-        User, limit_choices_to={'groups__name': MERCHANT_GROUP_NAME}
+        User, limit_choices_to={'groups__name': ROLES.MERCHANT.value}
     )
 
     barcode = models.ForeignKey(
@@ -176,10 +174,10 @@ class BarcodeImage(models.Model):
     )
 
     format = models.CharField(
-	    verbose_name='Barcode format',
+        verbose_name='Barcode format',
         choices=FORMAT_CHOISES,
-	    default=EAN13,
-	    max_length=21
+        default=EAN13,
+        max_length=21
     )
 
     image = models.ImageField(
