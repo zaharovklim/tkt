@@ -5,12 +5,27 @@ from django.db import models
 import pdfkit
 from ckeditor.fields import RichTextField
 
-from conf.settings import MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH
+from conf.settings import (
+    MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH,
+    ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME,
+)
 from apps.utils.models import ModelActionLogMixin
 from apps.home.models import Widget
 
 
+class TicketManager(models.Manager):
+
+    def get_objects_list_by_role(self, user):
+        role = user.role
+        if role == ADMIN_GROUP_NAME:
+            return self.get_queryset()
+        elif role == MERCHANT_GROUP_NAME:
+            return self.get_queryset().filter(created_by=user)
+
+
 class Ticket(ModelActionLogMixin):
+
+    objects = TicketManager()
 
     widget = models.ForeignKey(
         Widget,
@@ -60,6 +75,18 @@ class Ticket(ModelActionLogMixin):
         verbose_name="Amount of times user can bid",
         default=1,
     )
+
+    @property
+    def bid_statistics(self):
+        bids = self.bid_set.all()
+        accepted_count = bids.filter(status="ACCEPTED").count()
+        paid_count = bids.filter(status="PAID").count()
+        rejected_count = bids.filter(status="REJECTED").count()
+        return {
+            'accepted': accepted_count,
+            'paid': paid_count,
+            'rejected': rejected_count,
+        }
 
     def pdf_link(self):
         if self.pdf:

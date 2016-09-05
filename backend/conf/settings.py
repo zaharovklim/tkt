@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'apps.home',
     'apps.tickets',
     'apps.bids',
+    'apps.statistics',
     'apps.api',
 ]
 
@@ -155,7 +156,7 @@ STATIC_ASSETS_JSON = os.path.join(STATIC_ROOT, 'assets.json')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-
+ADMIN_GROUP_NAME = 'Admin'
 MERCHANT_GROUP_NAME = 'Merchant'
 
 WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'

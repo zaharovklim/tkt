@@ -5,6 +5,12 @@ from apps.tickets.models import Ticket
 
 class Bid(models.Model):
 
+    BID_STATUSES = (
+        ('ACCEPTED', 'accepted'),
+        ('PAID', 'paid'),
+        ('REJECTED', 'rejected'),
+    )
+
     ticket = models.ForeignKey(
         Ticket,
         verbose_name="Ticket",
@@ -27,5 +33,12 @@ class Bid(models.Model):
         blank=True
     )
 
+    status = models.CharField(
+        verbose_name="Status",
+        max_length=8,
+        choices=BID_STATUSES,
+        default='ACCEPTED',
+    )
+
     def __str__(self):
-        return "{} - {}".format(self.ticket, self.bid_price)
+        return "{} - {} - {}".format(self.ticket, self.bid_price, self.status)

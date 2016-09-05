@@ -2,16 +2,84 @@ import barcode, os
 from barcode.writer import ImageWriter
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from import_export import resources
 from image_cropping import ImageRatioField
 
+from conf.settings import ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME, BARCODE_PATH
 from apps.utils.models import ModelActionLogMixin
-from conf.settings import MERCHANT_GROUP_NAME, BARCODE_PATH
+
+
+# ----------------------------------------------------------------------------
+# Extending of User model
+# ----------------------------------------------------------------------------
+
+def role(self):
+    groups = self.groups.all()
+
+    merchant = Group.objects.get(name=MERCHANT_GROUP_NAME)
+    admin = Group.objects.get(name=ADMIN_GROUP_NAME)
+
+    if merchant in groups:
+        return MERCHANT_GROUP_NAME
+    elif admin in groups:
+        return ADMIN_GROUP_NAME
+    else:
+        raise ValueError(
+            'User has no appropriate group, there only "Merchant" and "Admin" '
+            'groups supported by system'
+        )
+
+User.add_to_class('role', property(role))
+
+
+def bid_statistics(self):
+    widgets = self.widget_set.all()
+    statistics = {'accepted': 0, 'paid': 0, 'rejected': 0}
+    for widget in widgets:
+        for property in widget.bid_statistics.keys():
+            statistics[property] += widget.bid_statistics[property]
+    return statistics
+
+User.add_to_class('bid_statistics', bid_statistics)
+
+
+def name(self):
+    return self.username
+
+User.add_to_class('name', name)
+
+
+class UserManager(models.Manager):
+
+    def get_objects_list_by_role(self, user):
+        role = user.role
+
+        if role == ADMIN_GROUP_NAME:
+            merchant = Group.objects.get(name=MERCHANT_GROUP_NAME)
+            return self.get_queryset().filter(groups__in=(merchant, ))
+        elif role == MERCHANT_GROUP_NAME:
+            return (user, )
+
+User.add_to_class('objects', UserManager())
+
+# ----------------------------------------------------------------------------
+
+
+class WidgetManager(models.Manager):
+
+    def get_objects_list_by_role(self, user):
+        role = user.role
+        if role == ADMIN_GROUP_NAME:
+            return self.get_queryset()
+        elif role == MERCHANT_GROUP_NAME:
+            return self.get_queryset().filter(created_by=user)
 
 
 class Widget(ModelActionLogMixin):
+
+    objects = WidgetManager()
 
     name = models.TextField(
         verbose_name="Name",
@@ -25,6 +93,16 @@ class Widget(ModelActionLogMixin):
         verbose_name="Is widget enabled",
         default=False,
     )
+
+    @property
+    def bid_statistics(self):
+        tickets = self.ticket_set.all()
+        statistics = {'accepted': 0, 'paid': 0, 'rejected': 0}
+        for ticket in tickets:
+            for property in ticket.bid_statistics.keys():
+                statistics[property] += ticket.bid_statistics[property]
+
+        return statistics
 
     def __str__(self):
         return self.name
@@ -53,6 +131,7 @@ class Barcode(models.Model):
 
 
 class BarcodeResource(resources.ModelResource):
+
     class Meta:
         model = Barcode
 
