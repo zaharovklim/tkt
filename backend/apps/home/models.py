@@ -89,7 +89,12 @@ class Widget(ModelActionLogMixin):
         tickets = self.ticket_set.all()
         statistics = {'accepted': 0, 'paid': 0, 'rejected': 0}
         for ticket in tickets:
+            print(ticket.bid_statistics)
+            print(ticket.name)
+            print(ticket.id)
+            print()
             for property in ticket.bid_statistics.keys():
+
                 statistics[property] += ticket.bid_statistics[property]
 
         return statistics

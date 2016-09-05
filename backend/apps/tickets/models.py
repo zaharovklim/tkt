@@ -79,16 +79,21 @@ class Ticket(ModelActionLogMixin):
     @property
     def bid_statistics(self):
         bids = self.bid_set.all()
-        # TODO: create migrations for status field
         # TODO: use statuses Emun
         accepted_count = bids.filter(status="ACCEPTED").count()
         paid_count = bids.filter(status="PAID").count()
         rejected_count = bids.filter(status="REJECTED").count()
-        return {
+        s = {
             'accepted': accepted_count,
             'paid': paid_count,
             'rejected': rejected_count,
         }
+        # print('----------------------')
+        # print(self.id)
+        # print(self.name)
+        # print(s)
+        # print('======================')
+        return s
 
     def pdf_link(self):
         if self.pdf:
