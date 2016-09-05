@@ -4,29 +4,29 @@
     <div class="module" id="statistics" style="width: 600px;">
     <table>
         <caption style="width: 584px;">
-            <a href="/admin/statistics/" class="section" title="Statistics">Bid statistics</a>
+            <a href="#" class="section" title="Statistics">Bid statistics</a>
         </caption>
         <tbody>
             {% if request.user.role == 'Admin' %}
                 <tr class="modegroup">
                     <th scope="row">
-                        <a href="/admin/statistics/overall/">Overall</a>
+                        <a href="{% url 'statistics_overall' %}">Overall</a>
                     </th>
                 </tr>
             {% endif %}
             <tr class="modegroup">
                 <th scope="row">
-                    <a href="/admin/statistics/merchant/">Per merchant</a>
+                    <a href="{% url 'statistics_per_model' 'merchant' %}">Per merchant</a>
                 </th>
             </tr>
             <tr class="modegroup">
                 <th scope="row">
-                    <a href="/admin/statistics/widget/">Per widget</a>
+                    <a href="{% url 'statistics_per_model' 'widget' %}">Per widget</a>
                 </th>
             </tr>
             <tr class="modegroup">
                 <th scope="row">
-                    <a href="/admin/statistics/ticket/">Per ticket</a>
+                    <a href="{% url 'statistics_per_model' 'ticket' %}">Per ticket</a>
                 </th>
             </tr>
         </tbody>
