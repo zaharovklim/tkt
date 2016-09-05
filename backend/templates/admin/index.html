@@ -7,11 +7,13 @@
             <a href="/admin/statistics/" class="section" title="Statistics">Bid statistics</a>
         </caption>
         <tbody>
-            <tr class="modegroup">
-                <th scope="row">
-                    <a href="/admin/statistics/overall/">Overall</a>
-                </th>
-            </tr>
+            {% if request.user.role == 'Admin' %}
+                <tr class="modegroup">
+                    <th scope="row">
+                        <a href="/admin/statistics/overall/">Overall</a>
+                    </th>
+                </tr>
+            {% endif %}
             <tr class="modegroup">
                 <th scope="row">
                     <a href="/admin/statistics/merchant/">Per merchant</a>

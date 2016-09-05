@@ -7,16 +7,15 @@ from django.contrib.auth.models import User, Group
 from import_export import resources
 from image_cropping import ImageRatioField
 
-from conf.settings import ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME
+from conf.settings import ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME, BARCODE_PATH
 from apps.utils.models import ModelActionLogMixin
-from conf.settings import MERCHANT_GROUP_NAME, BARCODE_PATH
 
 
 # ----------------------------------------------------------------------------
 # Extending of User model
 # ----------------------------------------------------------------------------
 
-def get_role(self):
+def role(self):
     groups = self.groups.all()
 
     merchant = Group.objects.get(name=MERCHANT_GROUP_NAME)
@@ -32,7 +31,7 @@ def get_role(self):
             'groups supported by system'
         )
 
-User.add_to_class('get_role', get_role)
+User.add_to_class('role', property(role))
 
 
 def bid_statistics(self):
@@ -46,13 +45,20 @@ def bid_statistics(self):
 User.add_to_class('bid_statistics', bid_statistics)
 
 
+def name(self):
+    return self.username
+
+User.add_to_class('name', name)
+
+
 class UserManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
-        role = user.get_role()
+        role = user.role
 
         if role == ADMIN_GROUP_NAME:
-            return self.get_queryset()
+            merchant = Group.objects.get(name=MERCHANT_GROUP_NAME)
+            return self.get_queryset().filter(groups__in=(merchant, ))
         elif role == MERCHANT_GROUP_NAME:
             return (user, )
 
@@ -64,7 +70,7 @@ User.add_to_class('objects', UserManager())
 class WidgetManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
-        role = user.get_role()
+        role = user.role
         if role == ADMIN_GROUP_NAME:
             return self.get_queryset()
         elif role == MERCHANT_GROUP_NAME:

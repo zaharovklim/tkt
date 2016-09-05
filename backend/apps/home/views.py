@@ -79,12 +79,13 @@ def bid_statistics_overall_view(request):
             overall_statistics[stat_prop] += object.bid_statistics[stat_prop]
 
     context = {
-        'object': {
+        'objects': ({
             'id': 1,
             'name': 'Overall',
             'bid_statistics': overall_statistics,
-        }
+        }, )
     }
+    context['model'] = 'Overall'
     return render(request, 'home/statistics_per_model.html', context)
 
 

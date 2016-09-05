@@ -39,7 +39,7 @@ class WidgetForm(forms.ModelForm):
 
     class Meta:
         model = Widget
-        fields = ('name', 'internal_name', 'enabled', 'created_by', )  # TODO: remove created_by
+        fields = ('name', 'internal_name', 'enabled', 'created_by', )
 
 
 class BarcodeResource(resources.ModelResource):
