@@ -105,7 +105,7 @@ class BarcodesImportAPIView(APIView):
 class MailchimpListsAPIView(APIView):
 
     def get(self, *args, **kwargs):
-        return Response(MailchimpList.get_lists(self, self.request), status=status.HTTP_200_OK)
+        return Response(MailchimpList.get_lists(self.request), status=status.HTTP_200_OK)
 
 
 class MailchimpSubscriberAPIView(APIView):
@@ -113,38 +113,38 @@ class MailchimpSubscriberAPIView(APIView):
     def get(self, *args, **kwargs):
         em_md5 = hl.md5(self.request.GET['email'].encode('utf-8')).hexdigest()
 
-        list_id = MailchimpSubscriber.retrive_list(self, self.request)
+        list_id = MailchimpSubscriber.retrive_list(self.request)
 
         try:
             list_id
-            user_info = MailchimpSubscriber.get_subscriber(self, list_id, em_md5)
+            user_info = MailchimpSubscriber.get_subscriber(list_id, em_md5)
             return Response(user_info, status=status.HTTP_200_OK)
         except NameError:
-            return Response('No list with that name found',
+            return Response('No lists with that name found',
                             status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, *args, **kwargs):
-        list_id = MailchimpSubscriber.retrive_list(self, self.request)
+        list_id = MailchimpSubscriber.retrive_list(self.request)
 
         try:
             list_id
-            user_info = MailchimpSubscriber.add_subscriber(self, list_id)
+            user_info = MailchimpSubscriber.add_subscriber(self.request, list_id)
             return Response(user_info, status=status.HTTP_200_OK)
         except NameError:
-            return Response('No list with that name found',
+            return Response('No lists with that name found',
                             status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, *args, **kwargs):
         em_md5 = hl.md5(self.request.data['email'].encode('utf-8')).hexdigest()
 
-        list_id = MailchimpSubscriber.retrive_list(self, self.request)
+        list_id = MailchimpSubscriber.retrive_list(self.request)
 
         try:
             list_id
-            user_info = MailchimpSubscriber.update_subscriber(self, list_id, em_md5)
+            user_info = MailchimpSubscriber.update_subscriber(self.request, list_id, em_md5)
             return Response(user_info, status=status.HTTP_200_OK)
         except NameError:
-            return Response('No list with that name found',
+            return Response('No lists with that name found',
                             status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -152,18 +152,18 @@ class MailchimpCampaignAPIView(APIView):
 
     def get(self, *args, **kwargs):
         try:
-            user_info = MailchimpCampaign.get_campaign(self)
+            user_info = MailchimpCampaign.get_campaign(self.request)
             return Response(user_info, status=status.HTTP_200_OK)
         except NameError:
-            return Response('No list with that name found',
+            return Response('No lists with that name found',
                             status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, *args, **kwargs):
         try:
-            user_info = MailchimpCampaign.create_campaign(self)
+            user_info = MailchimpCampaign.create_campaign(self.request)
             return Response(user_info, status=status.HTTP_200_OK)
         except NameError:
-            return Response('No list with that name found',
+            return Response('No lists with that name found',
                             status=status.HTTP_400_BAD_REQUEST)
 
 
