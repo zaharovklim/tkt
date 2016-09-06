@@ -6,8 +6,7 @@ import pdfkit
 from ckeditor.fields import RichTextField
 
 from conf.settings import (
-    MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH,
-    ADMIN_GROUP_NAME, MERCHANT_GROUP_NAME,
+    MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH, ROLES,
 )
 from apps.utils.models import ModelActionLogMixin
 from apps.home.models import Widget
@@ -16,10 +15,9 @@ from apps.home.models import Widget
 class TicketManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
-        role = user.role
-        if role == ADMIN_GROUP_NAME:
+        if user.role is ROLES.ADMIN:
             return self.get_queryset()
-        elif role == MERCHANT_GROUP_NAME:
+        elif user.role is ROLES.MERCHANT:
             return self.get_queryset().filter(created_by=user)
 
 

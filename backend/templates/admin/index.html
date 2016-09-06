@@ -7,7 +7,7 @@
             <a href="#" class="section" title="Statistics">Bid statistics</a>
         </caption>
         <tbody>
-            {% if request.user.role == 'Admin' %}
+            {% if request.user.role.value == 'Admin' %}
                 <tr class="modegroup">
                     <th scope="row">
                         <a href="{% url 'statistics_overall' %}">Overall</a>

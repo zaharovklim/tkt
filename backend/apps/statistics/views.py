@@ -3,14 +3,14 @@ from django.contrib.auth.models import User, Group
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseForbidden
 
-from conf.settings import ADMIN_GROUP_NAME
+from conf.settings import ROLES
 from apps.tickets.models import Ticket
 from apps.home.models import Widget
 
 
 @staff_member_required
 def bid_statistics_overall_view(request):
-    admin_group = Group.objects.get(name=ADMIN_GROUP_NAME)
+    admin_group = Group.objects.get(name=ROLES.ADMIN.value)
     if admin_group not in request.user.groups.all():
         return HttpResponseForbidden(
             "Only admin has permission to overall statistics"

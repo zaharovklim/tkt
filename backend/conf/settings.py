@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from enum import Enum
 
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
@@ -156,8 +157,11 @@ STATIC_ASSETS_JSON = os.path.join(STATIC_ROOT, 'assets.json')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-ADMIN_GROUP_NAME = 'Admin'
-MERCHANT_GROUP_NAME = 'Merchant'
+
+class ROLES(Enum):
+
+    ADMIN = 'Admin'
+    MERCHANT = 'Merchant'
 
 WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
 
