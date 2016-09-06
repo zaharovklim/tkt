@@ -6,10 +6,7 @@ except ImportError:
     from urllib import parse as urlparse
 
 from django.contrib.auth.models import Group
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
+from django.utils.encoding import force_text
 
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
@@ -22,16 +19,17 @@ from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
 from .mailchimp_api import *
 
-from conf.settings import MERCHANT_GROUP_NAME, MAILCHIMP_API_KEY, MAILCHIMP_URL
+from conf.settings import ROLES
 from apps.tickets.models import Ticket
-from .serializers import TicketsSerializer
 from apps.home.models import Barcode
+
+from .serializers import TicketsSerializer
 
 
 class IsMerchant(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        merchant_group = Group.objects.get(name=MERCHANT_GROUP_NAME)
+        merchant_group = Group.objects.get(name=ROLES.MERCHANT.value)
         user_groups = request.user.groups.all()
 
         return merchant_group in user_groups
@@ -165,6 +163,3 @@ class MailchimpCampaignAPIView(APIView):
         except NameError:
             return Response('No lists with that name found',
                             status=status.HTTP_400_BAD_REQUEST)
-
-
-

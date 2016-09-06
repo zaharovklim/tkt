@@ -26,7 +26,8 @@ class TicketForm(forms.ModelForm):
 
     class Meta:
         model = Ticket
-        exclude = ['pdf', ]
+        exclude = ('pdf', )
+
 
 class TicketResource(resources.ModelResource):
 
@@ -34,13 +35,15 @@ class TicketResource(resources.ModelResource):
         model = Ticket
         exclude = ('template', 'pdf')
 
+
 class TicketAdmin(ExportMixin, admin.ModelAdmin):
 
     resource_class = TicketResource
 
     fields = (
         'widget', 'name', 'internal_name', 'description', 'box_office_price',
-        'template', 'min_accepted_bid', 'max_bid_attempts', 'pdf_link',
+        'template', 'pdf_link', 'min_accepted_bid', 'max_bid_attempts',
+        'created_by'
     )
     readonly_fields = ('pdf_link', )
 
