@@ -38,7 +38,7 @@ class Bid(models.Model):
 
     status = models.CharField(
         verbose_name="Status",
-        max_lengith=1,
+        max_length=1,
         choices=BID_STATUSES,
         default=REJECTED,
     )
