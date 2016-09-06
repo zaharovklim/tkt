@@ -5,10 +5,13 @@ from apps.tickets.models import Ticket
 
 class Bid(models.Model):
 
+    ACCEPTED = 0
+    REJECTED = 1
+    PAID = 2
     BID_STATUSES = (
-        ('ACCEPTED', 'accepted'),
-        ('REJECTED', 'rejected'),
-        ('PAID', 'paid')
+        (ACCEPTED, 'accepted'),
+        (REJECTED, 'rejected'),
+        (PAID, 'paid')
     )
 
     ticket = models.ForeignKey(
@@ -35,9 +38,9 @@ class Bid(models.Model):
 
     status = models.CharField(
         verbose_name="Status",
-        max_length=8,
+        max_lengith=1,
         choices=BID_STATUSES,
-        default='ACCEPTED',
+        default=REJECTED,
     )
 
     number_of_tickets = models.SmallIntegerField(
