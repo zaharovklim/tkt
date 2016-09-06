@@ -19,7 +19,4 @@ django-import-export==0.4.5
 easy-thumbnails==2.3
 django-image-cropping==1.0.3
 viivakoodi==0.8
-#simplejson==3.8.2
-#-e git+git://github.com/divio/django-mailchimp.git@8860110bd4181408a61710e8b913398c61513206
-#mailchimp==2.0.9
 requests==2.11.1
