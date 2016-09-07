@@ -77,6 +77,17 @@ class WidgetManager(models.Manager):
 
 class Widget(ModelActionLogMixin):
 
+    DRAFT = 'Draft'
+    PLANNED = 'Planned'
+    PUBLISHED = 'Published'
+    UNPUBLISHED = 'Unpublished'
+    STATUS_CHOISES = (
+        (DRAFT, 'Draft'),
+        (PLANNED, 'Planned'),
+        (PUBLISHED, 'Published'),
+        (UNPUBLISHED, 'Unpublished'),
+    )
+
     objects = WidgetManager()
 
     name = models.TextField(
@@ -90,6 +101,13 @@ class Widget(ModelActionLogMixin):
     enabled = models.BooleanField(
         verbose_name="Is widget enabled",
         default=False,
+    )
+
+    status = models.CharField(
+        verbose_name='Widget status',
+        choices=STATUS_CHOISES,
+        default=DRAFT,
+        max_length=11
     )
 
     @property
