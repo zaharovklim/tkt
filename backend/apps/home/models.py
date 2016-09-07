@@ -88,6 +88,13 @@ class Widget(ModelActionLogMixin):
         (UNPUBLISHED, 'Unpublished'),
     )
 
+    REGULAR = 'Regular'
+    DYNAMIC = 'Dynamic'
+    TYPE_CHOISES = (
+        (REGULAR, 'Regular'),
+        (DYNAMIC, 'Dynamic'),
+    )
+
     objects = WidgetManager()
 
     name = models.TextField(
@@ -108,6 +115,13 @@ class Widget(ModelActionLogMixin):
         choices=STATUS_CHOISES,
         default=DRAFT,
         max_length=11
+    )
+
+    widget_type = models.CharField(
+        verbose_name='Widget type',
+        choices=TYPE_CHOISES,
+        default=DYNAMIC,
+        max_length=7
     )
 
     @property
