@@ -9,7 +9,7 @@ from conf.settings import (
     MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH, ROLES,
 )
 from apps.utils.models import ModelActionLogMixin
-from apps.home.models import Widget
+from apps.home.models import Widget, Barcode
 
 
 class TicketManager(models.Manager):
@@ -72,6 +72,10 @@ class Ticket(ModelActionLogMixin):
     max_bid_attempts = models.PositiveSmallIntegerField(
         verbose_name="Amount of times user can bid",
         default=1,
+    )
+
+    barcode = models.ForeignKey(
+        Barcode
     )
 
     @property

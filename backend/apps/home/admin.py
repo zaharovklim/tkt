@@ -48,7 +48,13 @@ class BarcodeResource(resources.ModelResource):
         model = Barcode
         skip_unchanged = True
         report_skipped = True
-        fields = ('id', 'article', 'barcode')
+        fields = ('id', 'article', 'barcode', 'created_by')
+
+    def before_import(self, dataset, *args, **kwargs):
+        dataset.headers.append('created_by')
+        user_col = [kwargs['user'].id for row in dataset]
+        dataset.append_col(user_col, header='created_by')
+        return super().before_import(dataset, *args, **kwargs)
 
 
 class BarcodeAdmin(ImportExportMixin, admin.ModelAdmin):

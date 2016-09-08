@@ -8,7 +8,7 @@ from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH
 from import_export import resources
 from import_export.admin import ExportMixin
 
-from .models import Ticket
+from .models import Ticket, Barcode
 
 
 class TicketForm(forms.ModelForm):
@@ -43,11 +43,16 @@ class TicketAdmin(ExportMixin, admin.ModelAdmin):
     fields = (
         'widget', 'name', 'internal_name', 'description', 'box_office_price',
         'template', 'pdf_link', 'min_accepted_bid', 'max_bid_attempts',
-        'created_by'
+        'created_by', 'barcode',
     )
     readonly_fields = ('pdf_link', )
 
     form = TicketForm
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'barcode':
+            kwargs['queryset'] = Barcode.objects.filter(created_by=request.user.id)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(Ticket, TicketAdmin)
