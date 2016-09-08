@@ -12,16 +12,14 @@ from conf.settings import ROLES, BARCODE_PATH
 from apps.utils.models import ModelActionLogMixin
 
 
-merchant = Group.objects.get(name=ROLES.MERCHANT.value)
-admin = Group.objects.get(name=ROLES.ADMIN.value)
-
 # ----------------------------------------------------------------------------
 # Extending of User model
 # ----------------------------------------------------------------------------
-
-
 def role(self):
     groups = self.groups.all()
+
+    merchant = Group.objects.get(name=ROLES.MERCHANT.value)
+    admin = Group.objects.get(name=ROLES.ADMIN.value)
 
     if merchant in groups:
         return ROLES.MERCHANT
@@ -56,6 +54,8 @@ User.add_to_class('name', name)
 class UserManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
+        merchant = Group.objects.get(name=ROLES.MERCHANT.value)
+
         if user.role is ROLES.ADMIN:
             return self.get_queryset().filter(groups__in=(merchant, ))
         elif user.role is ROLES.MERCHANT:

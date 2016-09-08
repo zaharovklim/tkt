@@ -5,9 +5,9 @@ from apps.tickets.models import Ticket
 
 class Bid(models.Model):
 
-    ACCEPTED = 0
-    REJECTED = 1
-    PAID = 2
+    ACCEPTED = 'ACCEPTED'
+    REJECTED = 'REJECTED'
+    PAID = 'PAID'
     BID_STATUSES = (
         (ACCEPTED, 'accepted'),
         (REJECTED, 'rejected'),
@@ -38,7 +38,7 @@ class Bid(models.Model):
 
     status = models.CharField(
         verbose_name="Status",
-        max_length=1,
+        max_length=8,
         choices=BID_STATUSES,
         default=REJECTED,
     )
