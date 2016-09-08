@@ -158,11 +158,6 @@ class Barcode(models.Model):
         auto_now_add=True
     )
 
-
-    created_by = models.ForeignKey(
-        User
-    )
-
     def __str__(self):
         return str(self.barcode)
 
