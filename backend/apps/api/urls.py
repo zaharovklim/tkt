@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from apps.api.views import (
     TicketsRetrieveUpdateDestroyAPIView, TicketsCreateAPIView,
-    BarcodesImportAPIView
+    BarcodesImportAPIView, BidAPIView,
 )
 
 
@@ -15,4 +15,7 @@ urlpatterns = [
     url(r'^barcodes/import/$',
         BarcodesImportAPIView.as_view(),
         name='barcodes-import'),
+    url(r'^bid/$',
+        BidAPIView.as_view(),
+        name='bid'),
 ]

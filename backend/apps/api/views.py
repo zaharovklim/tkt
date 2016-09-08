@@ -16,6 +16,7 @@ from import_export.resources import modelresource_factory
 from conf.settings import ROLES
 from apps.tickets.models import Ticket
 from apps.home.models import Barcode
+from apps.bids.models import Bid
 
 from .serializers import TicketsSerializer
 
@@ -92,3 +93,71 @@ class BarcodesImportAPIView(APIView):
         import_file.close()
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+class BidAPIView(APIView):
+
+    def post(self, r, *args, **kwargs):
+        context = {}
+
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        # --------------------------------------------------------------------
+        # Get and clean ticket_id, bid_price and number_of_tickets
+        try:
+            ticket_id = int(self.request.data.get('ticket_id'))
+        except (ValueError, TypeError):
+            return Response("Ticket id is invalid")
+
+        try:
+            bid_price = float(self.request.data.get('bid_price'))
+        except (ValueError, TypeError):
+            return Response("Bid price is invalid")
+
+        try:
+            number_of_tickets = int(self.request.data.get('number_of_tickets'))
+        except (ValueError, TypeError):
+            return Response("Number of tickets is invalid")
+
+        # --------------------------------------------------------------------
+        # Increment bid_attempts counter
+        if self.request.session.get('bid_attempts') is None:
+            self.request.session['bid_attempts'] = 1
+        else:
+            self.request.session['bid_attempts'] += 1
+        bid_attempts = self.request.session['bid_attempts']
+
+        # --------------------------------------------------------------------
+        # Select and test for existence of Ticket user trying to bid
+        try:
+            ticket = Ticket.objects.get(id=ticket_id)
+        except Ticket.DoesNotExist:
+            return Response("Ticket does not exist")
+
+        # --------------------------------------------------------------------
+        # Validate Ticket's bid restriction for maximum attempts
+        if bid_attempts > ticket.max_bid_attempts:
+            return Response(
+                "Bid attempts have exceeded maximum for this ticket"
+            )
+
+        # --------------------------------------------------------------------
+        bid_status = Bid.REJECTED
+        response = "You lose"
+        if bid_price > ticket.min_accepted_bid:
+            bid_status = Bid.ACCEPTED
+            response = "You won"
+
+        # TODO: offer to user fill the order form
+        context['reponse'] = response
+
+        Bid.objects.create(
+            session_key=self.request.session.session_key,
+            ticket=ticket,
+            bid_price=bid_price,
+            number_of_tickets=number_of_tickets,
+            status=bid_status,
+        )
+
+        return Response(response)
