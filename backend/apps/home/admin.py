@@ -28,7 +28,7 @@ class TicketInline(admin.StackedInline):
 
     model = Ticket
     form = TicketForm
-    extra = 1
+    extra = 0
     readonly_fields = ('pdf_link', )
 
 

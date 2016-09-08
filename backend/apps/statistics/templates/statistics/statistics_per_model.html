@@ -47,43 +47,46 @@
 
 
 <div id="content-main">
-  <table id="result_list">
-    <thead>
-      <tr>
-        <th scope="col" class="column-__str__">
-          <div class="text"><span>Statistics</span></div>
-          <div class="clear"></div>
-        </th>
-        <th>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-
-    {% if overall_statistics %}
-      <tr class="row1">
-        <th class="field-__str__">
-          {{ overall_statistics }}
-        </th>
-        <th>
-        </th>
-      </tr>
-    {% else %}
-      {% for object in objects %}
-        <tr class="{% cycle 'row1' 'row2' %}">
-          <th class="field-__str__">
-            <a style="display: block; padding-top: 12px;"
-               href="{{ object.get_absolute_path }}">{{ object.name }}</a>
+  {% if objects %}
+    <table id="result_list">
+      <thead>
+        <tr>
+          <th scope="col" class="column-__str__">
+            <div class="text"><span>Statistics</span></div>
+            <div class="clear"></div>
           </th>
           <th>
-            <div id="statistics_chart_{{ object.id }}"></div>
           </th>
         </tr>
-      {% endfor %}
-    {% endif %}
+      </thead>
+      <tbody>
 
-    </tbody>
-  </table>
+      {% if overall_statistics %}
+        <tr class="row1">
+          <th class="field-__str__">
+            {{ overall_statistics }}
+          </th>
+          <th>
+          </th>
+        </tr>
+      {% else %}
+        {% for object in objects %}
+          <tr class="{% cycle 'row1' 'row2' %}">
+            <th class="field-__str__">
+              <a style="display: block; padding-top: 12px;"
+                 href="{{ object.get_absolute_path }}">{{ object.name }}</a>
+            </th>
+            <th>
+              <div id="statistics_chart_{{ object.id }}"></div>
+            </th>
+          </tr>
+        {% endfor %}
+      {% endif %}
+      </tbody>
+    </table>
+  {% else %}
+    <div>There is no statistics yet</div>
+  {% endif %}
 </div>
 {% endblock %}
 
