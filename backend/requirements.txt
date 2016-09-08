@@ -19,3 +19,4 @@ django-import-export==0.4.5
 easy-thumbnails==2.3
 django-image-cropping==1.0.3
 viivakoodi==0.8
+django-cron==0.4.6

@@ -4,6 +4,8 @@ from barcode.writer import ImageWriter
 
 from django.db import models
 from django.contrib.auth.models import User, Group
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 
 from import_export import resources
 from image_cropping import ImageRatioField
@@ -182,6 +184,34 @@ class TicketImage(models.Model):
 
     def __str__(self):
         return str(self.merchant)
+
+
+class Bidder(models.Model):
+
+    session = models.ForeignKey(
+        Session
+    )
+
+    fails_count = models.IntegerField(
+        verbose_name='Failed bids count',
+        null = True,
+        blank = True,
+    )
+
+    last_fail = models.DateTimeField(
+        verbose_name='Last failed bid date',
+	    auto_now=True,
+        null=True,
+        blank=True,
+    )
+
+    blocked = models.BooleanField(
+        verbose_name='Blocked',
+        default=False,
+    )
+
+    def __str__(self):
+        return str(self.session)
 
 
 class BarcodeImage(models.Model):

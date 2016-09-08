@@ -47,6 +47,8 @@ class Bid(models.Model):
         verbose_name="Number of tickets",
     )
 
+
+
     def __str__(self):
         return "{} - {} - {}".format(self.ticket, self.bid_price, self.status)
 

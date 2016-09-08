@@ -9,7 +9,7 @@ from image_cropping import ImageCroppingMixin
 
 from apps.tickets.models import Ticket
 from apps.tickets.admin import TicketForm
-from .models import Widget, Barcode, TicketImage, BarcodeImage
+from .models import Widget, Barcode, TicketImage, BarcodeImage, Bidder
 
 
 def get_groups(self, obj):
@@ -81,3 +81,4 @@ admin.site.register(Widget, WidgetAdmin)
 admin.site.register(Barcode, BarcodeAdmin)
 admin.site.register(TicketImage, TicketImageAdmin)
 admin.site.register(BarcodeImage, BarcodeImageAdmin)
+admin.site.register(Bidder)

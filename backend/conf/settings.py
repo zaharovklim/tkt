@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'import_export',
     'image_cropping',
     'easy_thumbnails',
+    'django_cron',
 
     'apps.home',
     'apps.tickets',
@@ -131,6 +132,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+CRON_CLASSES = [
+    "apps.home.cron.UnblockBidders",
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -168,3 +173,5 @@ WKHTMLTOPDF_EXECUTABLE_PATH = '/usr/bin/xvfb-wkhtmltopdf'
 BASE_TICKET_TEMPLATE_PATH = 'conf/base_ticket_template.html'
 
 BARCODE_PATH = os.path.join(MEDIA_URL, 'barcodes/')
+
+UNBLOCK_TIME = 0.5
