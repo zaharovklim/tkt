@@ -8,8 +8,7 @@ from rest_framework.generics import (
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
-from rest_framework import status
+from rest_framework import permissions, status
 from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
 
@@ -98,27 +97,45 @@ class BarcodesImportAPIView(APIView):
 class BidAPIView(APIView):
 
     def post(self, r, *args, **kwargs):
-        context = {}
+        response = {}
 
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
         # --------------------------------------------------------------------
-        # Get and clean ticket_id, bid_price and number_of_tickets
+        # Get and clean article_id, bid_price and number_of_tickets
         try:
-            ticket_id = int(self.request.data.get('ticket_id'))
+            article_id = int(self.request.data.get('article_id'))
         except (ValueError, TypeError):
-            return Response("Ticket id is invalid")
+            response = {
+                "result": "NOK",
+                "error": 1,
+                "retry": True,
+                "message": "Article id is invalid"
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             bid_price = float(self.request.data.get('bid_price'))
         except (ValueError, TypeError):
-            return Response("Bid price is invalid")
+            response = {
+                "result": "NOK",
+                "error": 1,
+                "retry": True,
+                "message": "Bid price is invalid"
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             number_of_tickets = int(self.request.data.get('number_of_tickets'))
         except (ValueError, TypeError):
-            return Response("Number of tickets is invalid")
+            response = {
+                "result": "NOK",
+                "error": 1,
+                "retry": True,
+                "message": "Number of tickets is invalid"
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
         # --------------------------------------------------------------------
         # Increment bid_attempts counter
@@ -131,26 +148,45 @@ class BidAPIView(APIView):
         # --------------------------------------------------------------------
         # Select and test for existence of Ticket user trying to bid
         try:
-            ticket = Ticket.objects.get(id=ticket_id)
+            ticket = Ticket.objects.get(id=article_id)
         except Ticket.DoesNotExist:
-            return Response("Ticket does not exist")
+            response = {
+                "result": "NOK",
+                "error": 2,
+                "retry": True,
+                "message": "Ticket does not exist"
+            }
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
 
         # --------------------------------------------------------------------
         # Validate Ticket's bid restriction for maximum attempts
         if bid_attempts > ticket.max_bid_attempts:
-            return Response(
-                "Bid attempts have exceeded maximum for this ticket"
-            )
+            response = {
+                "result": "NOK",
+                "error": 3,
+                "retry": False,
+                "message": "Bid attempts have exceeded maximum for this ticket"
+            }
+            return Response(response, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         # --------------------------------------------------------------------
-        bid_status = Bid.REJECTED
-        response = "You lose"
+
         if bid_price > ticket.min_accepted_bid:
             bid_status = Bid.ACCEPTED
-            response = "You won"
-
-        # TODO: offer to user fill the order form
-        context['reponse'] = response
+            response_status = status.HTTP_201_CREATED
+            response = {
+                "result": "OK",
+                "retry": False,
+                "message": "You won the bid"
+            }
+        else:
+            bid_status = Bid.REJECTED
+            response_status = status.HTTP_200_OK
+            response = {
+                "result": "OK",
+                "retry": True,
+                "message": "You lose the bid"
+            }
 
         Bid.objects.create(
             session_key=self.request.session.session_key,
@@ -160,4 +196,4 @@ class BidAPIView(APIView):
             status=bid_status,
         )
 
-        return Response(response)
+        return Response(response, status=response_status)
