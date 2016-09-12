@@ -7,7 +7,7 @@ from import_export import resources
 from import_export.admin import ImportExportMixin
 from image_cropping import ImageCroppingMixin
 
-from apps.tickets.models import Ticket
+from apps.tickets.models import Article
 from apps.tickets.admin import TicketForm
 from .models import Widget, Barcode, TicketImage, BarcodeImage
 
@@ -26,7 +26,7 @@ admin.site.register(User, UserAdmin)
 
 class TicketInline(admin.StackedInline):
 
-    model = Ticket
+    model = Article
     form = TicketForm
     extra = 0
     readonly_fields = ('pdf_link', )

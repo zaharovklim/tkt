@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest
 
-from apps.tickets.models import Ticket
+from apps.tickets.models import Article
 from apps.bids.models import Bid
 
 
@@ -40,8 +40,8 @@ def index(request):
         # --------------------------------------------------------------------
         # Select and test for existence of Ticket user trying to bid
         try:
-            ticket = Ticket.objects.get(id=ticket_id)
-        except Ticket.DoesNotExist:
+            ticket = Article.objects.get(id=ticket_id)
+        except Article.DoesNotExist:
             return HttpResponseBadRequest("Ticket does not exist")
 
         # --------------------------------------------------------------------

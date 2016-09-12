@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.tickets.models import Ticket
+from apps.tickets.models import Article
 
 
 class Bid(models.Model):
@@ -15,7 +15,7 @@ class Bid(models.Model):
     )
 
     ticket = models.ForeignKey(
-        Ticket,
+        Article,
         verbose_name="Ticket",
     )
 
