@@ -15,6 +15,7 @@ from enum import Enum
 
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
+SITE_NAME = "Ticketool"
 
 THUMBNAIL_PROCESSORS = (
     'image_cropping.thumbnail_processors.crop_corners',
