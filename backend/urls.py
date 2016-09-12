@@ -5,8 +5,6 @@ from django.contrib import admin
 admin.site.site_header = settings.SITE_NAME
 admin.site.site_title = settings.SITE_NAME
 
-admin.site.site_title = settings.SITE_NAME
-admin.site.site_header = settings.SITE_NAME
 
 urlpatterns = [
     url(r'^admin/statistics/', include('apps.statistics.urls')),
