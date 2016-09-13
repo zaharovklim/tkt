@@ -8,7 +8,7 @@ from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH
 from import_export import resources
 from import_export.admin import ExportMixin
 
-from .models import Ticket
+from .models import Article
 
 
 class TicketForm(forms.ModelForm):
@@ -25,14 +25,14 @@ class TicketForm(forms.ModelForm):
         self.fields['template'].initial = initial_template
 
     class Meta:
-        model = Ticket
+        model = Article
         exclude = ('pdf', )
 
 
 class TicketResource(resources.ModelResource):
 
     class Meta:
-        model = Ticket
+        model = Article
         exclude = ('template', 'pdf')
 
 
@@ -50,4 +50,4 @@ class TicketAdmin(ExportMixin, admin.ModelAdmin):
     form = TicketForm
 
 
-admin.site.register(Ticket, TicketAdmin)
+admin.site.register(Article, TicketAdmin)

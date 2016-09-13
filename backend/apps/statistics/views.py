@@ -4,7 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseForbidden
 
 from conf.settings import ROLES
-from apps.tickets.models import Ticket
+from apps.tickets.models import Article
 from apps.home.models import Widget
 
 
@@ -38,7 +38,7 @@ def bid_statistics_per_model_view(request, model):
     STATISTICS_MODELS_MAP = {
         'merchant': User,
         'widget': Widget,
-        'ticket': Ticket,
+        'ticket': Article,
     }
 
     objects = (

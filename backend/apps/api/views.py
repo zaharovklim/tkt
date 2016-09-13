@@ -14,7 +14,7 @@ from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
 
 from conf.settings import ROLES
-from apps.tickets.models import Ticket
+from apps.tickets.models import Article
 from apps.home.models import Barcode
 
 from .serializers import TicketsSerializer
@@ -38,7 +38,7 @@ class TicketsCreateAPIView(CreateAPIView):
 class TicketsRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     permission_classes = (IsMerchant, )
-    queryset = Ticket.objects.all()
+    queryset = Article.objects.all()
     serializer_class = TicketsSerializer
 
 
