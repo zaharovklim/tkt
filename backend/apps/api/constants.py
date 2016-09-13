@@ -1,0 +1,13 @@
+from enum import Enum
+
+
+class RESULT_CODES(Enum):
+
+    WON_THE_BID = 1
+    LOST_THE_BID = 2
+    TOO_MANY_BIDS = 3
+    ORDER_IN_PROGRESS = 4
+    ORDER_CANSELLED = 5
+    ORDER_PAID = 6
+    INVALID_PARAMETER = 7
+    ARTICLE_NOT_FOUND = 8

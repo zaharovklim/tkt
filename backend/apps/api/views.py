@@ -1,23 +1,27 @@
 import tempfile
+import datetime
 
 from django.contrib.auth.models import Group
 from django.utils.encoding import force_text
+from django.utils import timezone
 
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
-from rest_framework import status
+from rest_framework import permissions, status
 from import_export.formats import base_formats
 from import_export.resources import modelresource_factory
 
 from conf.settings import ROLES
 from apps.tickets.models import Article
 from apps.home.models import Barcode
+from apps.bids.models import Bid, Buyer, Order
 
 from .serializers import TicketsSerializer
+from .forms import BidForm, BuyerForm
+from .constants import RESULT_CODES
 
 
 class IsMerchant(permissions.BasePermission):
@@ -92,3 +96,84 @@ class BarcodesImportAPIView(APIView):
         import_file.close()
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+class BidAPIView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        response = {}
+
+        bid_form = BidForm(self.request.data)
+        buyer_form = BuyerForm(self.request.data)
+
+        if not bid_form.is_valid() or not buyer_form.is_valid():
+            response = {
+                "result": RESULT_CODES.INVALID_PARAMETER.value,
+                "retry": True,
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        buyer, created = Buyer.objects.get_or_create(
+            email=buyer_form.cleaned_data['email']
+        )
+        buyer.firstname = buyer_form.cleaned_data['firstname']
+        buyer.lastname = buyer_form.cleaned_data['lastname']
+        buyer.save()
+
+        article = bid_form.cleaned_data['article']
+        number_of_tickets = bid_form.cleaned_data['number_of_tickets']
+
+        # --------------------------------------------------------------------
+        # Get bid_attempts counter
+        bid_counting_timeframe = timezone.now() - datetime.timedelta(minutes=30)
+        latest_bids_attmpts_count = Bid.objects.filter(
+            buyer=buyer,
+            article=article,
+            created_at__gte=bid_counting_timeframe
+        ).count()
+
+        # --------------------------------------------------------------------
+        # Validate Article's bid restriction for maximum attempts
+        if latest_bids_attmpts_count > article.max_bid_attempts:
+            response = {
+                "result": RESULT_CODES.TOO_MANY_BIDS.value,
+                "retry": False,
+            }
+            return Response(response, status=status.HTTP_429_TOO_MANY_REQUESTS)
+
+        # --------------------------------------------------------------------
+        bid_price = bid_form.cleaned_data['bid_price']
+
+        bid = Bid.objects.create(
+            buyer=buyer,
+            article=article,
+            bid_price=bid_price,
+            number_of_tickets=number_of_tickets,
+        )
+
+        if bid_price > article.min_accepted_bid:
+            bid_status = Bid.ACCEPTED
+            response_status = status.HTTP_201_CREATED
+            response = {
+                "result": RESULT_CODES.WON_THE_BID.value,
+                "retry": False,
+                "bid_id": bid.id,
+            }
+        else:
+            bid_status = Bid.REJECTED
+            response_status = status.HTTP_200_OK
+            response = {
+                "result": RESULT_CODES.LOST_THE_BID.value,
+                "retry": True,
+                "bid_id": bid.id,
+            }
+
+        bid.status = bid_status
+        bid.save()
+
+        if bid_status is Bid.ACCEPTED:
+            Order.objects.create(
+                bid=bid,
+            )
+
+        return Response(response, status=response_status)

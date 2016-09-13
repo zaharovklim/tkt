@@ -12,7 +12,7 @@ from apps.utils.models import ModelActionLogMixin
 from apps.home.models import Widget
 
 
-class TicketManager(models.Manager):
+class ArticleManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
         if user.role is ROLES.ADMIN:
@@ -23,7 +23,7 @@ class TicketManager(models.Manager):
 
 class Article(ModelActionLogMixin):
 
-    objects = TicketManager()
+    objects = ArticleManager()
 
     widget = models.ForeignKey(
         Widget,
