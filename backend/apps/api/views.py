@@ -1,7 +1,9 @@
 import tempfile
+import datetime
 
 from django.contrib.auth.models import Group
 from django.utils.encoding import force_text
+from django.utils import timezone
 
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView, CreateAPIView
@@ -15,9 +17,11 @@ from import_export.resources import modelresource_factory
 from conf.settings import ROLES
 from apps.tickets.models import Article
 from apps.home.models import Barcode
-from apps.bids.models import Bid
+from apps.bids.models import Bid, Buyer, Order
 
 from .serializers import TicketsSerializer
+from .forms import BidForm, BuyerForm
+from .constants import RESULT_CODES
 
 
 class IsMerchant(permissions.BasePermission):
@@ -96,104 +100,82 @@ class BarcodesImportAPIView(APIView):
 
 class BidAPIView(APIView):
 
-    def post(self, r, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         response = {}
 
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        bid_form = BidForm(self.request.data)
+        buyer_form = BuyerForm(self.request.data)
 
-        # --------------------------------------------------------------------
-        # Get and clean article_id, bid_price and number_of_tickets
-        try:
-            article_id = int(self.request.data.get('article_id'))
-        except (ValueError, TypeError):
+        if not bid_form.is_valid() or not buyer_form.is_valid():
             response = {
-                "result": "NOK",
-                "error": 1,
+                "result": RESULT_CODES.INVALID_PARAMETER.value,
                 "retry": True,
-                "message": "Article id is invalid"
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            bid_price = float(self.request.data.get('bid_price'))
-        except (ValueError, TypeError):
-            response = {
-                "result": "NOK",
-                "error": 1,
-                "retry": True,
-                "message": "Bid price is invalid"
-            }
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        buyer, created = Buyer.objects.get_or_create(
+            email=buyer_form.cleaned_data['email']
+        )
+        buyer.firstname = buyer_form.cleaned_data['firstname']
+        buyer.lastname = buyer_form.cleaned_data['lastname']
+        buyer.save()
 
-        try:
-            number_of_tickets = int(self.request.data.get('number_of_tickets'))
-        except (ValueError, TypeError):
-            response = {
-                "result": "NOK",
-                "error": 1,
-                "retry": True,
-                "message": "Number of tickets is invalid"
-            }
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        article = bid_form.cleaned_data['article']
+        number_of_tickets = bid_form.cleaned_data['number_of_tickets']
 
         # --------------------------------------------------------------------
-        # Increment bid_attempts counter
-        if self.request.session.get('bid_attempts') is None:
-            self.request.session['bid_attempts'] = 1
-        else:
-            self.request.session['bid_attempts'] += 1
-        bid_attempts = self.request.session['bid_attempts']
+        # Get bid_attempts counter
+        bid_counting_timeframe = timezone.now() - datetime.timedelta(minutes=30)
+        latest_bids_attmpts_count = Bid.objects.filter(
+            buyer=buyer,
+            article=article,
+            created_at__gte=bid_counting_timeframe
+        ).count()
 
         # --------------------------------------------------------------------
-        # Select and test for existence of Ticket user trying to bid
-        try:
-            ticket = Ticket.objects.get(id=article_id)
-        except Ticket.DoesNotExist:
+        # Validate Article's bid restriction for maximum attempts
+        if latest_bids_attmpts_count > article.max_bid_attempts:
             response = {
-                "result": "NOK",
-                "error": 2,
-                "retry": True,
-                "message": "Ticket does not exist"
-            }
-            return Response(response, status=status.HTTP_404_NOT_FOUND)
-
-        # --------------------------------------------------------------------
-        # Validate Ticket's bid restriction for maximum attempts
-        if bid_attempts > ticket.max_bid_attempts:
-            response = {
-                "result": "NOK",
-                "error": 3,
+                "result": RESULT_CODES.TOO_MANY_BIDS.value,
                 "retry": False,
-                "message": "Bid attempts have exceeded maximum for this ticket"
             }
             return Response(response, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         # --------------------------------------------------------------------
+        bid_price = bid_form.cleaned_data['bid_price']
 
-        if bid_price > ticket.min_accepted_bid:
+        bid = Bid.objects.create(
+            buyer=buyer,
+            article=article,
+            bid_price=bid_price,
+            number_of_tickets=number_of_tickets,
+        )
+
+        if bid_price > article.min_accepted_bid:
             bid_status = Bid.ACCEPTED
             response_status = status.HTTP_201_CREATED
             response = {
-                "result": "OK",
+                "result": RESULT_CODES.WON_THE_BID.value,
                 "retry": False,
-                "message": "You won the bid"
+                "bid_id": bid.id,
             }
         else:
             bid_status = Bid.REJECTED
             response_status = status.HTTP_200_OK
             response = {
-                "result": "OK",
+                "result": RESULT_CODES.LOST_THE_BID.value,
                 "retry": True,
-                "message": "You lose the bid"
+                "bid_id": bid.id,
             }
 
-        Bid.objects.create(
-            session_key=self.request.session.session_key,
-            ticket=ticket,
-            bid_price=bid_price,
-            number_of_tickets=number_of_tickets,
-            status=bid_status,
-        )
+        bid.status = bid_status
+        bid.save()
+
+        if bid_status is Bid.ACCEPTED:
+            Order.objects.create(
+                bid=bid,
+            )
 
         return Response(response, status=response_status)
+
+# http POST 127.0.0.1:8000/api/v1/bid/ article=1 number_of_tickets=2 bid_price=3 email=buyer_other_other@gmail.com firstname=Alex

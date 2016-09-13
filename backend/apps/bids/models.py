@@ -3,6 +3,30 @@ from django.db import models
 from apps.tickets.models import Article
 
 
+class Buyer(models.Model):
+
+    email = models.EmailField(
+        verbose_name="E-mail",
+    )
+
+    firstname = models.CharField(
+        verbose_name="First name",
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    lastname = models.CharField(
+        verbose_name="Last name",
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.email
+
+
 class Bid(models.Model):
 
     ACCEPTED = 'ACCEPTED'
@@ -14,14 +38,16 @@ class Bid(models.Model):
         (PAID, 'paid')
     )
 
-    ticket = models.ForeignKey(
-        Article,
-        verbose_name="Ticket",
+    buyer = models.ForeignKey(
+        Buyer,
+        verbose_name="Buyer",
+        null=True,
+        blank=True,
     )
 
-    session_key = models.CharField(
-        verbose_name="Session key",
-        max_length=32
+    article = models.ForeignKey(
+        Article,
+        verbose_name="Article",
     )
 
     bid_price = models.DecimalField(
@@ -48,7 +74,7 @@ class Bid(models.Model):
     )
 
     def __str__(self):
-        return "{} - {} - {}".format(self.ticket, self.bid_price, self.status)
+        return "{} - {} - {}".format(self.article, self.bid_price, self.status)
 
 
 class Order(models.Model):
@@ -64,47 +90,13 @@ class Order(models.Model):
         blank=True,
     )
 
-    number_of_tickets = models.SmallIntegerField(
-        verbose_name="Number of tickets",
-    )
-
-    ip_address = models.GenericIPAddressField(
-        verbose_name="IP Address",
-        blank=True,
-        null=True,
-    )
-
-    article_title = models.TextField(
-        verbose_name="Article title",
-        blank=True,
-        null=True,
-    )
-
-    first_name = models.TextField(
-        verbose_name="First name",
-        blank=True,
-        null=True,
-    )
-
-    last_name = models.TextField(
-        verbose_name="Last name",
-        blank=True,
-        null=True,
-    )
-
-    email = models.EmailField(
-        verbose_name="E-mail",
-    )
-
     is_paid = models.BooleanField(
         verbose_name="Is paid",
         default=False,
     )
 
     def __str__(self):
-        return "{} ({}) - {} - {}".format(
+        return "{} ({})".format(
             self.bid,
-            self.number_of_tickets,
-            self.created_at.replace(microsecond=0),
             'Paid' if self.is_paid else 'Waiting for payment'
         )
