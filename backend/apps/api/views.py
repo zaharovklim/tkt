@@ -177,5 +177,3 @@ class BidAPIView(APIView):
             )
 
         return Response(response, status=response_status)
-
-# http POST 127.0.0.1:8000/api/v1/bid/ article=1 number_of_tickets=2 bid_price=3 email=buyer_other_other@gmail.com firstname=Alex
