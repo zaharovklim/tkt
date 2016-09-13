@@ -21,7 +21,7 @@ class TicketManager(models.Manager):
             return self.get_queryset().filter(created_by=user)
 
 
-class Ticket(ModelActionLogMixin):
+class Article(ModelActionLogMixin):
 
     objects = TicketManager()
 
@@ -100,7 +100,7 @@ class Ticket(ModelActionLogMixin):
         if self.pk is None:
             changed_or_not_exists = True
         else:
-            orig = Ticket.objects.get(pk=self.pk)
+            orig = Article.objects.get(pk=self.pk)
             if orig.template != self.template:
                 changed_or_not_exists = True
 

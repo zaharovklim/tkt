@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.tickets.models import Ticket
+from apps.tickets.models import Article
 
 
 class TicketsSerializer(serializers.ModelSerializer):
@@ -10,4 +10,4 @@ class TicketsSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Ticket
+        model = Article
