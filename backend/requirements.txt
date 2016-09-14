@@ -19,3 +19,5 @@ django-import-export==0.4.5
 easy-thumbnails==2.3
 django-image-cropping==1.0.3
 viivakoodi==0.8
+django-nested-admin==3.0.8
+django-weekday-field==1.1.0

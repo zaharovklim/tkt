@@ -2,13 +2,16 @@ import os
 
 from django import forms
 from django.contrib import admin
+from django.forms import CheckboxSelectMultiple
 
-from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH
+from conf.settings import BASE_DIR, BASE_TICKET_TEMPLATE_PATH, MEDIA_URL, CKEDITOR_JQUERY_URL
 
 from import_export import resources
 from import_export.admin import ExportMixin
+from nested_admin import NestedStackedInline, NestedModelAdmin
+from weekday_field.fields import WeekdayField
 
-from .models import Article
+from .models import Article, Discount, DiscountSettings
 
 
 class TicketForm(forms.ModelForm):
@@ -36,18 +39,46 @@ class TicketResource(resources.ModelResource):
         exclude = ('template', 'pdf')
 
 
-class TicketAdmin(ExportMixin, admin.ModelAdmin):
+class DiscountRequiredSettingsInline(NestedStackedInline):
+    model = DiscountSettings
+    extra = 1
+    max_num = 1
+    exclude = ('weekday',)
+    fk_name = 'related_discount'
+
+    formfield_overrides = {
+        WeekdayField: {'widget': CheckboxSelectMultiple},
+    }
+
+class DiscountSettingsInline(NestedStackedInline):
+    model = DiscountSettings
+    extra = 0
+    fk_name = 'related_discount'
+
+    formfield_overrides = {
+        WeekdayField: {'widget': CheckboxSelectMultiple},
+    }
+
+
+class DiscountInline(NestedStackedInline):
+    model = Discount
+    extra = 1
+    fk_name = 'related_article'
+    inlines = [DiscountRequiredSettingsInline, DiscountSettingsInline]
+
+
+class TicketAdmin(ExportMixin, NestedModelAdmin):
+    change_form_template = '/app/templates/admin/tickets/article/add/change_form.html'
 
     resource_class = TicketResource
 
     fields = (
-        'widget', 'name', 'internal_name', 'description', 'box_office_price',
-        'template', 'pdf_link', 'min_accepted_bid', 'max_bid_attempts',
-        'created_by'
+        'widget', 'name', 'internal_name', 'description',
+        'template', 'pdf_link', 'created_by'
     )
     readonly_fields = ('pdf_link', )
-
     form = TicketForm
+    inlines = [DiscountInline]
 
 
 admin.site.register(Article, TicketAdmin)

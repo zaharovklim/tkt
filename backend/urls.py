@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/', include('apps.api.urls')),
     url(r'^', include('apps.home.urls')),
+    url(r'^nested_admin/', include('nested_admin.urls')),
 ]
 
 if settings.DEBUG:

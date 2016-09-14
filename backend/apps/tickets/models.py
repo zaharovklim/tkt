@@ -4,6 +4,7 @@ from django.db import models
 
 import pdfkit
 from ckeditor.fields import RichTextField
+from weekday_field.fields import WeekdayField
 
 from conf.settings import (
     MEDIA_ROOT, WKHTMLTOPDF_EXECUTABLE_PATH, ROLES,
@@ -12,7 +13,7 @@ from apps.utils.models import ModelActionLogMixin
 from apps.home.models import Widget
 
 
-class ArticleManager(models.Manager):
+class TicketManager(models.Manager):
 
     def get_objects_list_by_role(self, user):
         if user.role is ROLES.ADMIN:
@@ -23,7 +24,7 @@ class ArticleManager(models.Manager):
 
 class Article(ModelActionLogMixin):
 
-    objects = ArticleManager()
+    objects = TicketManager()
 
     widget = models.ForeignKey(
         Widget,
@@ -44,12 +45,6 @@ class Article(ModelActionLogMixin):
         verbose_name="Description",
     )
 
-    box_office_price = models.DecimalField(
-        verbose_name="Box office price",
-        max_digits=6,
-        decimal_places=2,
-    )
-
     template = RichTextField(
         verbose_name="Template",
         default="",
@@ -62,17 +57,23 @@ class Article(ModelActionLogMixin):
         blank=True,
     )
 
-    min_accepted_bid = models.DecimalField(
-        verbose_name="Min accepted bid",
-        max_digits=6,
-        decimal_places=2,
-        default=0,
+    countdown_time = models.IntegerField(
+        verbose_name="Countdown time (in seconds)",
+        null=True,
+        blank=True,
+    )
+
+    unblock_time = models.IntegerField(
+        verbose_name="Unblock time (in minutes)",
+        null=True,
+        blank=True,
     )
 
     max_bid_attempts = models.PositiveSmallIntegerField(
         verbose_name="Amount of times user can bid",
         default=1,
     )
+
 
     @property
     def bid_statistics(self):
@@ -123,3 +124,62 @@ class Article(ModelActionLogMixin):
 
     def __str__(self):
         return self.name
+
+
+class Discount(models.Model):
+    date_begin = models.DateField(
+        verbose_name='Valid from',
+        null=True,
+        blank=True,
+    )
+    date_end = models.DateField(
+        verbose_name='Valid to',
+        null=True,
+        blank=True,
+    )
+    related_article = models.ForeignKey(
+        'Article'
+    )
+
+
+class DiscountSettings(models.Model):
+
+    weekday = WeekdayField(
+        null=True,
+        blank=True,
+    )
+    price = models.DecimalField(
+        verbose_name='Price in EUR',
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    min_tickets = models.IntegerField(
+        verbose_name='Minimum tickets per customer',
+        null=True,
+        blank=True,
+    )
+    max_tickets = models.IntegerField(
+        verbose_name='Maximum tickets per customer',
+        null=True,
+        blank=True,
+    )
+    discount = models.DecimalField(
+        verbose_name='Displayed discount in %',
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        null = True,
+        blank = True,
+    )
+    min_accepted_bid = models.DecimalField(
+        verbose_name="Min accepted bid",
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+    )
+    related_discount = models.ForeignKey(
+        'Discount'
+    )
