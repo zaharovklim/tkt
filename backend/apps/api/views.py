@@ -1,12 +1,12 @@
 import tempfile
 import datetime
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.utils.encoding import force_text
 from django.utils import timezone
 
 from rest_framework.generics import (
-    RetrieveUpdateDestroyAPIView, CreateAPIView
+    RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,7 +19,7 @@ from apps.tickets.models import Article
 from apps.home.models import Barcode
 from apps.bids.models import Bid, Buyer, Order
 
-from .serializers import ArticlesSerializer
+from .serializers import ArticlesSerializer, MerchantsSerializer
 from .forms import BidForm, BuyerForm
 from .constants import RESULT_CODES
 
@@ -31,6 +31,15 @@ class IsMerchant(permissions.BasePermission):
         user_groups = request.user.groups.all()
 
         return merchant_group in user_groups
+
+
+class IsAdmin(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        admin_group = Group.objects.get(name=ROLES.ADMIN.value)
+        user_groups = request.user.groups.all()
+
+        return admin_group in user_groups
 
 
 class ArticlesCreateAPIView(CreateAPIView):
@@ -177,3 +186,11 @@ class BidAPIView(APIView):
             )
 
         return Response(response, status=response_status)
+
+
+class MerchantAPIListView(ListAPIView):
+
+    permission_classes = (IsAdmin, )
+
+    queryset = User.objects.merchants()
+    serializer_class = MerchantsSerializer

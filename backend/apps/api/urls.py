@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from apps.api.views import (
     ArticlesRetrieveUpdateDestroyAPIView, ArticlesCreateAPIView,
-    BarcodesImportAPIView, BidAPIView,
+    BarcodesImportAPIView, BidAPIView, MerchantAPIListView,
 )
 
 
@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^articles/$',
         ArticlesCreateAPIView.as_view(),
         name='articles-create'),
-    url(r'^Articles/(?P<pk>[\d]+)/$',
+    url(r'^articles/(?P<pk>[\d]+)/$',
         ArticlesRetrieveUpdateDestroyAPIView.as_view(),
         name='articles'),
     url(r'^barcodes/import/$',
@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'^bid/$',
         BidAPIView.as_view(),
         name='bid'),
+    url(r'^merchants/$',
+        MerchantAPIListView.as_view(),
+        name='merchants'),
 ]
