@@ -1,17 +1,17 @@
 from django.conf.urls import url
 from apps.api.views import (
-    TicketsRetrieveUpdateDestroyAPIView, TicketsCreateAPIView,
+    ArticlesRetrieveUpdateDestroyAPIView, ArticlesCreateAPIView,
     BarcodesImportAPIView, BidAPIView,
 )
 
 
 urlpatterns = [
-    url(r'^tickets/$',
-        TicketsCreateAPIView.as_view(),
-        name='tickets-create'),
-    url(r'^tickets/(?P<pk>[\d]+)/$',
-        TicketsRetrieveUpdateDestroyAPIView.as_view(),
-        name='tickets'),
+    url(r'^articles/$',
+        ArticlesCreateAPIView.as_view(),
+        name='articles-create'),
+    url(r'^Articles/(?P<pk>[\d]+)/$',
+        ArticlesRetrieveUpdateDestroyAPIView.as_view(),
+        name='articles'),
     url(r'^barcodes/import/$',
         BarcodesImportAPIView.as_view(),
         name='barcodes-import'),

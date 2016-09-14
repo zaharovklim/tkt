@@ -19,7 +19,7 @@ from apps.tickets.models import Article
 from apps.home.models import Barcode
 from apps.bids.models import Bid, Buyer, Order
 
-from .serializers import TicketsSerializer
+from .serializers import ArticlesSerializer
 from .forms import BidForm, BuyerForm
 from .constants import RESULT_CODES
 
@@ -33,17 +33,17 @@ class IsMerchant(permissions.BasePermission):
         return merchant_group in user_groups
 
 
-class TicketsCreateAPIView(CreateAPIView):
+class ArticlesCreateAPIView(CreateAPIView):
 
     permission_classes = (IsMerchant, )
-    serializer_class = TicketsSerializer
+    serializer_class = ArticlesSerializer
 
 
-class TicketsRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+class ArticlesRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     permission_classes = (IsMerchant, )
     queryset = Article.objects.all()
-    serializer_class = TicketsSerializer
+    serializer_class = ArticlesSerializer
 
 
 class BarcodesImportAPIView(APIView):
