@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from apps.tickets.models import Article
+from apps.home.models import Widget
 
 
 class ArticlesSerializer(serializers.ModelSerializer):
@@ -20,3 +21,21 @@ class MerchantsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email')
+
+
+class WidgetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('id', 'name', 'widget_type')
+        model = Widget
+
+
+class MerchantsWidgetsSerializer(serializers.ModelSerializer):
+
+    widgets = WidgetSerializer(source="widget_set", many=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'first_name', 'last_name', 'email', 'widgets',
+        )

@@ -105,6 +105,12 @@ class Widget(ModelActionLogMixin):
 
     objects = WidgetManager()
 
+    merchant = models.ForeignKey(
+        User,
+        limit_choices_to={'groups__name': ROLES.MERCHANT.value},
+        related_name='merchant'
+    )
+
     name = models.TextField(
         verbose_name="Name",
     )

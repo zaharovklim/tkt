@@ -19,7 +19,9 @@ from apps.tickets.models import Article
 from apps.home.models import Barcode
 from apps.bids.models import Bid, Buyer, Order
 
-from .serializers import ArticlesSerializer, MerchantsSerializer
+from .serializers import (
+    ArticlesSerializer, MerchantsSerializer, MerchantsWidgetsSerializer,
+)
 from .forms import BidForm, BuyerForm
 from .constants import RESULT_CODES
 
@@ -194,3 +196,11 @@ class MerchantAPIListView(ListAPIView):
 
     queryset = User.objects.merchants()
     serializer_class = MerchantsSerializer
+
+
+class MerchantsWidgetsAPIListView(ListAPIView):
+
+    permission_classes = (IsAdmin, )
+
+    queryset = User.objects.merchants()
+    serializer_class = MerchantsWidgetsSerializer

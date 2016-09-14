@@ -39,7 +39,10 @@ class WidgetForm(forms.ModelForm):
 
     class Meta:
         model = Widget
-        fields = ('name', 'internal_name', 'enabled', 'created_by', 'status', 'widget_type', )
+        fields = (
+            'merchant', 'name', 'internal_name', 'enabled',
+            'created_by', 'status', 'widget_type',
+        )
 
 
 class BarcodeResource(resources.ModelResource):
