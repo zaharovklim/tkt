@@ -62,12 +62,10 @@ class UserManager(models.Manager):
             return self.get_queryset().filter(id=user.id)
 
     def merchants(self):
-        merchant = Group.objects.get(name=ROLES.MERCHANT.value)
-        return self.get_queryset().filter(groups__in=(merchant, ))
+        return self.get_queryset().filter(groups__name=ROLES.MERCHANT.value)
 
     def admins(self):
-        admin = Group.objects.get(name=ROLES.ADMIN.value)
-        return self.get_queryset().filter(groups__in=(admin, ))
+        return self.get_queryset().filter(groups__name=ROLES.ADMIN.value)
 
 User.add_to_class('objects', UserManager())
 

@@ -39,37 +39,28 @@ class TicketResource(resources.ModelResource):
         exclude = ('template', 'pdf')
 
 
-class DiscountRequiredSettingsInline(NestedStackedInline):
-    model = DiscountSettings
-    extra = 1
-    max_num = 1
-    exclude = ('weekday',)
-    fk_name = 'related_discount'
-
-    formfield_overrides = {
-        WeekdayField: {'widget': CheckboxSelectMultiple},
-    }
-
 class DiscountSettingsInline(NestedStackedInline):
     model = DiscountSettings
-    extra = 0
+    extra = 1
     fk_name = 'related_discount'
 
     formfield_overrides = {
         WeekdayField: {'widget': CheckboxSelectMultiple},
     }
+
+    def clean(self):
+        print(self.pk)
 
 
 class DiscountInline(NestedStackedInline):
     model = Discount
     extra = 1
     fk_name = 'related_article'
-    inlines = [DiscountRequiredSettingsInline, DiscountSettingsInline]
+    inlines = [DiscountSettingsInline]
 
 
 class TicketAdmin(ExportMixin, NestedModelAdmin):
     change_form_template = '/app/templates/admin/tickets/article/add/change_form.html'
-
     resource_class = TicketResource
 
     fields = (

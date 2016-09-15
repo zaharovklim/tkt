@@ -2,7 +2,7 @@ from django.conf.urls import url
 from apps.api.views import (
     ArticlesRetrieveUpdateDestroyAPIView, ArticlesCreateAPIView,
     BarcodesImportAPIView, BidAPIView, MerchantAPIListView,
-    MerchantsWidgetsAPIListView,
+    MerchantsWidgetsAPIListView, WidgetArticlesRetrieveAPIView,
 )
 
 
@@ -25,4 +25,7 @@ urlpatterns = [
     url(r'^merchants/widgets/$',
         MerchantsWidgetsAPIListView.as_view(),
         name='merchants-widgets'),
+    url(r'^widget/(?P<pk>[\d]+)/articles/$',
+        WidgetArticlesRetrieveAPIView.as_view(),
+        name='widget-articles'),
 ]

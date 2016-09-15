@@ -6,7 +6,7 @@ from django.utils.encoding import force_text
 from django.utils import timezone
 
 from rest_framework.generics import (
-    RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
+    RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView, RetrieveAPIView,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,11 +16,12 @@ from import_export.resources import modelresource_factory
 
 from conf.settings import ROLES
 from apps.tickets.models import Article
-from apps.home.models import Barcode
+from apps.home.models import Barcode, Widget
 from apps.bids.models import Bid, Buyer, Order
 
 from .serializers import (
     ArticlesSerializer, MerchantsSerializer, MerchantsWidgetsSerializer,
+    WidgetArticlesSerializer,
 )
 from .forms import BidForm, BuyerForm
 from .constants import RESULT_CODES
@@ -204,3 +205,9 @@ class MerchantsWidgetsAPIListView(ListAPIView):
 
     queryset = User.objects.merchants()
     serializer_class = MerchantsWidgetsSerializer
+
+
+class WidgetArticlesRetrieveAPIView(RetrieveAPIView):
+
+    queryset = Widget.objects.all()
+    serializer_class = WidgetArticlesSerializer

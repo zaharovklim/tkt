@@ -39,3 +39,19 @@ class MerchantsWidgetsSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'first_name', 'last_name', 'email', 'widgets',
         )
+
+
+class ArticleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('id', 'name', 'description', 'box_office_price')
+        model = Article
+
+
+class WidgetArticlesSerializer(serializers.ModelSerializer):
+
+    articles = ArticleSerializer(source="article_set", many=True)
+
+    class Meta:
+        fields = ('articles', )
+        model = Widget
