@@ -142,12 +142,7 @@ class Discount(models.Model):
     )
 
 
-class DiscountSettings(models.Model):
-
-    weekday = WeekdayField(
-        null=True,
-        blank=True,
-    )
+class DiscountSettingsAbstract(models.Model):
     price = models.DecimalField(
         verbose_name='Price in EUR',
         max_digits=6,
@@ -171,8 +166,8 @@ class DiscountSettings(models.Model):
         max_digits=6,
         decimal_places=2,
         default=0,
-        null = True,
-        blank = True,
+        null=True,
+        blank=True,
     )
     min_accepted_bid = models.DecimalField(
         verbose_name="Min accepted bid",
@@ -180,6 +175,26 @@ class DiscountSettings(models.Model):
         decimal_places=2,
         default=0,
     )
-    related_discount = models.ForeignKey(
-        'Discount'
+
+    class Meta:
+        abstract = True
+
+
+class DefaultDiscountSettings(DiscountSettingsAbstract):
+    related_discount = models.OneToOneField(
+        'Discount',
+        related_name='default_settings'
     )
+
+
+class DiscountSettings(DiscountSettingsAbstract):
+    weekday = WeekdayField(
+        null=True,
+        blank=True,
+    )
+
+    related_discount = models.ForeignKey(
+        'Discount',
+        related_name='settings'
+    )
+

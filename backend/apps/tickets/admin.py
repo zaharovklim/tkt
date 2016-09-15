@@ -11,7 +11,7 @@ from import_export.admin import ExportMixin
 from nested_admin import NestedStackedInline, NestedModelAdmin
 from weekday_field.fields import WeekdayField
 
-from .models import Article, Discount, DiscountSettings
+from .models import Article, Discount, DiscountSettings, DefaultDiscountSettings
 
 
 class TicketForm(forms.ModelForm):
@@ -48,15 +48,16 @@ class DiscountSettingsInline(NestedStackedInline):
         WeekdayField: {'widget': CheckboxSelectMultiple},
     }
 
-    def clean(self):
-        print(self.pk)
+
+class DefaultDiscountSettingsInline(NestedStackedInline, admin.StackedInline):
+    model = DefaultDiscountSettings
 
 
 class DiscountInline(NestedStackedInline):
     model = Discount
     extra = 1
     fk_name = 'related_article'
-    inlines = [DiscountSettingsInline]
+    inlines = [DefaultDiscountSettingsInline, DiscountSettingsInline]
 
 
 class TicketAdmin(ExportMixin, NestedModelAdmin):
